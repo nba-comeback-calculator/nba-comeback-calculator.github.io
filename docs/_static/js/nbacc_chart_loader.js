@@ -36,7 +36,6 @@ function resetChartZoom(chartId) {
     }
 }
 
-
 // Function to load and plot chart data
 async function loadAndPlotChart(chartDiv) {
     const divId = chartDiv.id;
@@ -52,8 +51,9 @@ async function loadAndPlotChart(chartDiv) {
     loadedCharts.add(divId);
 
     // Check if this is a calculator-enabled chart
-    const isCalculatorChart = chartDiv.classList.contains("nbacc-calculator") && 
-                             chartDiv.id !== "nbacc_calculator"; // Skip the main calculator div
+    const isCalculatorChart =
+        chartDiv.classList.contains("nbacc-calculator") &&
+        chartDiv.id !== "nbacc_calculator"; // Skip the main calculator div
 
     // Create chart container structure first
     // First, clear the div completely
@@ -86,11 +86,11 @@ async function loadAndPlotChart(chartDiv) {
     if (isCalculatorChart) {
         const buttonContainer = document.createElement("div");
         buttonContainer.className = "calculator-button-container";
-        
+
         const configureButton = document.createElement("button");
         configureButton.className = "btn btn-primary calculator-configure-btn";
         configureButton.textContent = "Configure";
-        configureButton.addEventListener("click", function() {
+        configureButton.addEventListener("click", function () {
             // Show calculator UI for this specific chart
             if (typeof nbacc_calculator_ui !== "undefined") {
                 nbacc_calculator_ui.showCalculatorUI(divId);
@@ -98,7 +98,7 @@ async function loadAndPlotChart(chartDiv) {
                 console.error("nbacc_calculator_ui module is not loaded");
             }
         });
-        
+
         buttonContainer.appendChild(configureButton);
         // Append the button container to the chart-container-parent instead of the chart div
         // This ensures it's properly centered with the chart
@@ -112,7 +112,7 @@ async function loadAndPlotChart(chartDiv) {
     const rootUrl = window.location.protocol + "//" + window.location.host;
     const jsonUrl = `${rootUrl}${nbacc_utils.staticDir}/json/charts/${
         divId.split("_copy")[0]
-    }.json`;
+    }.json.gz`;
 
     // Fetch the JSON data
     let chartData;
@@ -131,7 +131,7 @@ async function loadAndPlotChart(chartDiv) {
             jsonUrl.endsWith(".gz") || (contentType && contentType.includes("gzip"));
         if (isGzipped) {
             // Use the readGzJson utility function
-            chartData = await readGzJson(response);
+            chartData = await nbacc_utils.readGzJson(response);
         } else {
             // Regular JSON
             chartData = await response.json();
@@ -165,7 +165,10 @@ async function loadAndPlotChart(chartDiv) {
     const formattedData = nbacc_plotter_data.formatDataForChartJS(chartData);
 
     // Create chart and store the instance
-    const chartInstance = nbacc_plotter_core.createChartJSChart(canvas.id, formattedData);
+    const chartInstance = nbacc_plotter_core.createChartJSChart(
+        canvas.id,
+        formattedData
+    );
     chartInstances[divId] = chartInstance;
 
     // Add plot type as a property on the chart instance for easy access
@@ -318,7 +321,7 @@ function validateChartData(chartData) {
         // Only check for slope (m) and y-intercept (b) for point_margin_v_win_percent plot type
         // For time_v_point_margin plot type, we use y_fit_value in each data point instead
         if (
-            (chartData.plot_type === "point_margin_v_win_percent") &&
+            chartData.plot_type === "point_margin_v_win_percent" &&
             (line.m === undefined || line.b === undefined)
         ) {
             throw new Error(

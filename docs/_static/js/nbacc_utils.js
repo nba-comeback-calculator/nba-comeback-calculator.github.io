@@ -12,18 +12,91 @@ const nbacc_utils = (() => {
     var staticDir = "/_static";
 
     /**
-     * Reads and decompresses a gzipped JSON file from a URL
-     * @param {string} url - The URL of the gzipped JSON file
+     * Reads and decompresses a gzipped JSON file from a URL or Response object
+     * @param {string|Response} urlOrResponse - The URL of the gzipped JSON file or a Response object
      * @returns {Promise<object>} - The decompressed and parsed JSON data
      */
-    async function readGzJson(url) {
+    async function readGzJson(urlOrResponse) {
         try {
-            const response = await fetch(url);
-            const buffer = await response.arrayBuffer();
-            const uint8Array = new Uint8Array(buffer);
-            const decompressed = pako.inflate(uint8Array, { to: "string" });
-            const jsonData = JSON.parse(decompressed);
-            return jsonData;
+            let response;
+            if (typeof urlOrResponse === 'string') {
+                // If a URL string is provided, fetch it
+                response = await fetch(urlOrResponse);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } else if (urlOrResponse instanceof Response) {
+                // If it's already a Response object, use it directly
+                response = urlOrResponse;
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Check if the body has already been read
+                if (response.bodyUsed) {
+                    // If the body has been consumed, we need to fetch the URL again
+                    const responseUrl = response.url;
+                    if (!responseUrl) {
+                        throw new Error('Response body has been consumed and URL is not available');
+                    }
+                    response = await fetch(responseUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+            } else {
+                throw new Error('Invalid parameter: must be a URL string or Response object');
+            }
+            
+            // Try the standard approach first
+            try {
+                const buffer = await response.arrayBuffer();
+                const uint8Array = new Uint8Array(buffer);
+                
+                const decompressed = pako.inflate(uint8Array, { to: "string" });
+                const jsonData = JSON.parse(decompressed);
+                return jsonData;
+            } catch (inflateError) {
+                console.warn("Standard decompression failed, trying alternative approach:", inflateError);
+                
+                // Fallback: Try the base64 approach from StackOverflow
+                try {
+                    // Get the response as text (which might be base64)
+                    const responseText = await response.text();
+                    
+                    // Convert base64 to binary string if it looks like base64
+                    // (just a simple heuristic - check if it's mostly alphanumeric plus +/)
+                    const isLikelyBase64 = /^[A-Za-z0-9+/=]+$/.test(responseText.substring(0, 100));
+                    
+                    let binaryString;
+                    if (isLikelyBase64) {
+                        try {
+                            binaryString = atob(responseText);
+                        } catch (e) {
+                            // Not valid base64, use the original
+                            binaryString = responseText;
+                        }
+                    } else {
+                        binaryString = responseText;
+                    }
+                    
+                    // Convert binary string to Uint8Array
+                    const charData = new Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        charData[i] = binaryString.charCodeAt(i);
+                    }
+                    
+                    const altUint8Array = new Uint8Array(charData);
+                    
+                    // Try to inflate
+                    const altDecompressed = pako.inflate(altUint8Array, { to: "string" });
+                    const altJsonData = JSON.parse(altDecompressed);
+                    return altJsonData;
+                } catch (altError) {
+                    console.error("Alternative decompression approach also failed:", altError);
+                    throw new Error(`Failed to decompress gzipped JSON: ${inflateError.message}; Alternative method also failed: ${altError.message}`);
+                }
+            }
         } catch (error) {
             console.error("Error reading or parsing gzipped JSON:", error);
             throw error;
