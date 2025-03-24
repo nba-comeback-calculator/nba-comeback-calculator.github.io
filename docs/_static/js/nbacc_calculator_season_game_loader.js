@@ -8,7 +8,8 @@
 
 const nbacc_calculator_season_game_loader = (() => {
     // Global variable for base path to JSON files
-    const json_base_path = "/_static/json/seasons"; // Update this path if needed
+    // Use the same path resolution approach as chart loader
+    let json_base_path = `${nbacc_utils.staticDir}/json/seasons`; // Use staticDir from utils
 
     class Season {
         static _seasons = {}; // Class-level cache of loaded seasons
@@ -41,17 +42,9 @@ const nbacc_calculator_season_game_loader = (() => {
             this.year = year;
 
             // Get the full URL to the season JSON file
-            // If running in a browser, use the current origin as base
-            let baseUrl = "";
-            if (
-                typeof window !== "undefined" &&
-                window.location &&
-                window.location.origin
-            ) {
-                baseUrl = window.location.origin;
-            }
-
-            this.filename = `${baseUrl}${json_base_path}/nba_season_${year}.json`;
+            // Use the same approach as chart loader with protocol and host
+            const rootUrl = window.location.protocol + "//" + window.location.host;
+            this.filename = `${rootUrl}${json_base_path}/nba_season_${year}.json.gz`;
             //console.log(`Season ${year} file path: ${this.filename}`);
 
             this._games = null;
@@ -102,7 +95,14 @@ const nbacc_calculator_season_game_loader = (() => {
                     );
                 }
 
-                this.data = await response.json();
+                // Check if we have gzipped JSON (based on filename)
+                if (this.filename.endsWith('.gz')) {
+                    // Use the readGzJson utility function for gzipped data
+                    this.data = await nbacc_utils.readGzJson(response);
+                } else {
+                    // Regular JSON
+                    this.data = await response.json();
+                }
 
                 // Debug the loaded JSON data structure
                 // console.log(`Season ${this.year} data structure:`, {
