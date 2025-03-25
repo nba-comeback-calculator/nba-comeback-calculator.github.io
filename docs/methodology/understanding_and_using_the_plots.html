@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Breaking Down The Eras &#8212; nba comeback calculator  documentation</title>
+    <title>Understanding and Using The Comeback Charts &#8212; nba comeback calculator  documentation</title>
   
   
   
@@ -39,7 +39,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=51479823" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/pydata-customizations.css?v=9ca096d6" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/pydata-customizations.css?v=1a338c58" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -57,7 +57,8 @@
                 gtag('js', new Date());
                 gtag('config', 'G-6Q6K588YXL');
             </script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'analysis/breaking_down_the_eras';</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'methodology/understanding_and_using_the_plots';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
@@ -79,13 +80,13 @@
     <script src="../_static/js/nbacc_calculator_season_game_loader.js?v=0c267cdf"></script>
     <script src="../_static/js/nbacc_calculator_plot_primitives.js?v=eb3a0bff"></script>
     <script src="../_static/js/nbacc_calculator_api.js?v=71cfeb41"></script>
-    <script src="../_static/js/nbacc_calculator_state.js?v=557cc058"></script>
-    <script src="../_static/js/nbacc_calculator_ui.js?v=5f77f547"></script>
+    <script src="../_static/js/nbacc_calculator_state.js?v=609f77bd"></script>
+    <script src="../_static/js/nbacc_calculator_ui.js?v=9e26f8b6"></script>
     <script src="../_static/js/nbacc_calculator_init.js?v=a68fa125"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Down-Or-More Versus Down-At-Most Versus Down-At-Time" href="down_down_down.html" />
-    <link rel="prev" title="20 is the New 18" href="20_is_new_18.html" />
+    <link rel="next" title="How Trend Lines Were Formed" href="how_trend_lines_were_formed.html" />
+    <link rel="prev" title="Methodology" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -164,8 +165,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../analysis/index.html">
     Analysis
   </a>
 </li>
@@ -178,8 +179,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../methodology/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Methodology
   </a>
 </li>
@@ -243,8 +244,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../analysis/index.html">
     Analysis
   </a>
 </li>
@@ -257,8 +258,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../methodology/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Methodology
   </a>
 </li>
@@ -326,9 +327,9 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Analysis</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Methodology</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Breaking Down The Eras</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Understanding and Using The Comeback Charts</span></li>
   </ul>
 </nav>
 </div>
@@ -345,10 +346,104 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="breaking-down-the-eras">
-<h1>Breaking Down The Eras<a class="headerlink" href="#breaking-down-the-eras" title="Link to this heading">#</a></h1>
-<section id="id1">
-<span id="id2"></span><h2>Breaking Down The Eras<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+  <section id="understanding-and-using-the-comeback-charts">
+<h1>Understanding and Using The Comeback Charts<a class="headerlink" href="#understanding-and-using-the-comeback-charts" title="Link to this heading">#</a></h1>
+<p>What do we mean by “comeback” and what’s the best way to view the “chances” of a
+comeback?  It seems like a simple question, but there’s a little nuance to it as there
+are slightly different ways of defining it, so let’s jump in and talk about the four
+plot types used in this project:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1">Max Points Down Or More</a></p></li>
+<li><p><a class="reference internal" href="#id2">Max Points Down</a></p></li>
+<li><p><a class="reference internal" href="#id3">Points Down At Time</a></p></li>
+<li><p><a class="reference internal" href="#id4">Percent Chance of Winning: Time v. Points Down</a></p></li>
+</ul>
+<section id="max-points-down-or-more">
+<span id="id1"></span><h2>Max Points Down Or More<a class="headerlink" href="#max-points-down-or-more" title="Link to this heading">#</a></h2>
+<p>The first, maybe most common way people talk about comebacks is like a line <a class="reference external" href="https://www.espn.com/nba/story/_/id/39698420/no-lead-safe-nba-big-comebacks-blown-leads">taken from
+this ESPN article</a>:</p>
+<blockquote class="pull-quote">
+<div><p>The frequency of 10-point and 15-point comebacks has increased as well. In 1997-98,
+teams that fell behind by double digits had an .181 winning percentage. That
+climbed to .250 a season ago and is at .229 this season, meaning nearly one in
+every four games in which a team takes a double-digit lead ends with
+the-other-team-winning.</p>
+</div></blockquote>
+<p>That leads to this chart:</p>
+<div id="understand/nbacc_max_or_more_48_espn_0" class="nbacc-chart"></div><p>You can see the -10 point margin point lines up with his statistics exactly.</p>
+<p>It’s important to note here that every point contains all the wins and losses for the
+previous point margin. So the -10 point includes all the games at the -11 point and
+beyond.</p>
+</section>
+<section id="max-points-down">
+<span id="id2"></span><h2>Max Points Down<a class="headerlink" href="#max-points-down" title="Link to this heading">#</a></h2>
+<p>Even though this is a common way of talking about comebacks, it’s a little unfair in a
+sense. For the -10 point, the odds of coming back are weighted by all the other more
+unlikely comebacks.</p>
+<p>A somewhat more fair way to look at it is: the max point you are down <em>at most</em> – that
+leads to these type of plots:</p>
+<div id="understand/nbacc_max_48_eras_1" class="nbacc-chart"></div><p>So here we see the raw data for the -10 points down is 53% for the modern era and 48%
+for the old school era. What this is saying is that, on average, the winning team goes
+down about 10 points at some point in the game – and comes back! So if your team is
+down 10 points, don’t sweat it too hard, it’s totally average.</p>
+</section>
+<section id="points-down-at-time">
+<span id="id3"></span><h2>Points Down At Time<a class="headerlink" href="#points-down-at-time" title="Link to this heading">#</a></h2>
+<p>But what about when you’re watching a game and don’t have the benefit of hindsight to
+know what your max point deficit is going to be? As a fan, the most natural way to
+think of it – I am down this many points right now, what are the odds? In this case,
+you pick a certain point in time and collect all the point margins at that time and
+determine the chance of winning, leading to plots like this:</p>
+<div id="understand/nbacc_down_at_24_eras_1" class="nbacc-chart"></div><p>So that chart says things like: if your team is down 20 points at the half, they have a
+5% chance of winning on average. You can use the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator</span></a> to try as many different times as you want.</p>
+</section>
+<section id="percent-chance-of-winning-time-v-points-down">
+<span id="id4"></span><h2>Percent Chance of Winning: Time v. Points Down<a class="headerlink" href="#percent-chance-of-winning-time-v-points-down" title="Link to this heading">#</a></h2>
+<p>Now, it’s a little inconvenient to have to look at a different chart for every point in
+time. So what you can further do is, behind the scenes:</p>
+<ol class="arabic simple">
+<li><p>Pick a percent chance you want to focus on, say 20% or 1%.</p></li>
+<li><p>Calculate a <a class="reference internal" href="#id3">points down at time</a> for every minute and invert the <span class="xref std std-ref">trend lines</span>
+to figure out what point deficit matches your percentage. By using the trend line we
+filter out the statistical noise and get the most accurate point deficit for our
+given probability.</p></li>
+</ol>
+<p>Then you can make plots like this:</p>
+<div id="plots/all_time_v_modern/percent_plot_group_0" class="nbacc-chart"></div><p>Here, we also find the “Record” game – that is, the game that overcame the largest
+deficit at that time and provide that point with game data.</p>
+</section>
+<section id="plot-controls">
+<span id="using-the-plot-controls"></span><h2>Plot Controls<a class="headerlink" href="#plot-controls" title="Link to this heading">#</a></h2>
+<p>For any of the first 3 plots, you can hover over either:</p>
+<ol class="arabic simple">
+<li><p>Actual data taken from NBA games. Here you can look at the # Wins / # Games,
+the calculated Win %, how often this point deficit occurs (win or lose), and a few
+of the games that make up this point. These games are clickable if you want to go to
+NBA.com and view the play-by-play report.</p></li>
+<li><p>The trend line data points – this shows you the “best” Win % chance for this
+point deficit since the trend line filters out most of the statistical noise.</p></li>
+</ol>
+<p>You can also zoom in or even go full screen to make it easier to hover over a point of
+interest.</p>
+</section>
+<section id="how-win-is-calculated">
+<span id="id5"></span><h2>How Win % Is Calculated<a class="headerlink" href="#how-win-is-calculated" title="Link to this heading">#</a></h2>
+<p>The Win % number in the plots is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\text{Win %} = \frac{\text{# of Wins &#64; Point Deficit}}{\text{# of Wins &#64; Point Deficit} + \text{# of Losses &#64; Point Deficit}}\]</div>
+<p>This is a little unintuitive, because you might think it should be:</p>
+<div class="math notranslate nohighlight">
+\[\text{Win %} = \frac{\text{# of Wins &#64; Point Deficit}}{\text{# of Games &#64; Point Deficit}}\]</div>
+<p>For many cases, this is the same thing. Consider, however, the Win % for the case where
+the score is tied at halftime. Let’s say there are 1,000 such games in your set. Well,
+there are 1,000 wins and 1,000 losses in these cases, so if you used the second formula
+you would get a Win % = 100%, which is clearly not right.</p>
+<p>The same thing happens with the Max Down Or More plots, where some of the same games
+are both wins and losses, so we use the first formula which matches with how the
+statistic is generally reported.</p>
+<p>Just note that in the hover boxes, the “Wins X out of Y Games” is using the total
+number of games for the Y. So if you divide X/Y you might get a different number than
+the Win %. Normally, the numbers are almost the same.</p>
 </section>
 </section>
 
@@ -375,7 +470,12 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Breaking Down The Eras</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#max-points-down-or-more">Max Points Down Or More</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#max-points-down">Max Points Down</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-down-at-time">Points Down At Time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#percent-chance-of-winning-time-v-points-down">Percent Chance of Winning: Time v. Points Down</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-controls">Plot Controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-win-is-calculated">How Win % Is Calculated</a></li>
 </ul>
   </nav></div>
 
