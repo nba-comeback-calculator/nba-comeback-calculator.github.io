@@ -2,6 +2,16 @@
 
 **NOTE**: For calculator-specific details and usage, refer to [CALCULATOR.md](CALCULATOR.md) which describes the in-memory JSON data handling approach and calculator implementation.
 
+## Chart Loading Configuration
+
+The chart loading behavior can be configured with a top-level variable:
+
+- `nbacc_utils.__LOAD_CHART_ON_PAGE_LOAD__`: Controls how charts are loaded
+  - When `true` (default): All charts load immediately on page load
+  - When `false`: Charts load lazily when scrolled into viewport (better for pages with many charts)
+
+This setting is defined in `nbacc_utils.js` and used by `nbacc_chart_loader.js`.
+
 ## Calculator State Management
 
 The calculator now includes state management features:
@@ -112,6 +122,17 @@ Each plot type has specific visualization requirements handled by the plotter ba
 ## Important Sections
 
 When you see "Add the important comment X", it means to add a comment in the code and also add it to this section for future reference.
+
+- **POINT_HOVER_BEHAVIOR**: Chart points grow in size on hover but tooltips only appear on click. This is controlled by:
+  - Global chart options: `events: ['mousemove', 'click', 'mouseout']` in createChartJSConfig
+  - Dataset options: Both scatter and trend line datasets have `events: ['mousemove', 'click']`
+  - Point size changes: 
+    - Scatter points: `pointRadius: isMobile() ? 5.6 : 8` growing to `pointHoverRadius: isMobile() ? 11 : 14` on hover
+    - Trend line points: `pointRadius: isMobile() ? 3 : 4` growing to `pointHoverRadius: isMobile() ? 8 : 11` on hover
+  - Hover detection areas: 
+    - Scatter points: `hoverRadius: 8` in interaction settings
+    - Trend line points: `hoverRadius: 6` in interaction settings
+  - The external tooltip handler checks for click events and only shows tooltips on actual clicks
 
 - **CHART_BACKGROUND_COLOR**: Chart plot area background color and opacity setting in plotBackgroundPlugin
 - **FULL_SCREEN_FUNCTIONS**: Full screen and exit full screen functionality for all devices including mobile; disables page scrolling while in full screen mode; on mobile: enables zooming, disables normal page pinch-zooming to prevent interference with chart zoom functionality, adds reset zoom button, shows smaller win count numbers, and enables tooltip hover boxes during full screen mode only; automatically resets zoom when exiting full screen; uses global currentFullscreenChart variable to track active chart; implements ESC key handler to exit fullscreen mode when ESC key is pressed; properly restores chart to original dimensions when exiting fullscreen

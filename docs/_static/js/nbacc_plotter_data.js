@@ -32,6 +32,7 @@ nbacc_plotter_data = (() => {
         } = nbacc_utils);
     }
     // Global variable to store point margin data for use across modules
+    // This is a module-level variable, not a global one
     var pointMarginData = {};
 
     // Format the NBA data JSON structure for Chart.js
@@ -171,6 +172,10 @@ nbacc_plotter_data = (() => {
                 const y = line.m * x + line.b;
 
                 // Calculate win percentage using normalCDF
+                // Where the trend line Win % number is coming from.
+                // if (x == -20) {
+                //     console.log(line.legend, x, y, Num.CDF(y));
+                // }
                 const winPercentage = (100.0 * Num.CDF(y)).toFixed(2);
 
                 // Store the data using legend as key
@@ -226,12 +231,14 @@ nbacc_plotter_data = (() => {
                     animation: false, // Disable animations
                     responsive: true,
                     maintainAspectRatio: false, // Better control over dimensions
+                    // Global interactions setting
+                    events: ['mousemove', 'click', 'mouseout'], // Include mousemove for hover effects, click for tooltips
                     interaction: {
                         mode: "nearest",
                         intersect: true, // Require direct intersection
                         axis: "xy", // Consider both axes for finding nearest element
                         includeInvisible: false, // Only detect visible elements
-                        hoverRadius: 3, // Smaller hover detection radius (default is 10)
+                        hoverRadius: 5, // Moderate hover detection radius (default is 10)
                     },
                     plugins: createPluginsConfig(
                         chartData,
@@ -275,13 +282,13 @@ nbacc_plotter_data = (() => {
          */
         function createTitleConfig(chartData) {
             let titleText = chartData.title;
-            
+
             // Check if the title contains the | character and split on the first occurrence
-            if (titleText && titleText.includes('|')) {
-                const parts = titleText.split('|');
-                titleText = [parts[0].trim(), parts.slice(1).join('|').trim()];
+            if (titleText && titleText.includes("|")) {
+                const parts = titleText.split("|");
+                titleText = [parts[0].trim(), parts.slice(1).join("|").trim()];
             }
-            
+
             return {
                 display: true,
                 text: titleText,
@@ -326,7 +333,8 @@ nbacc_plotter_data = (() => {
                 mode: "nearest", // Show tooltip for nearest point
                 intersect: true, // Require direct intersection
                 axis: "xy", // Consider both axes for nearest point
-                hoverRadius: 3, // Reduced hover sensitivity by 50%
+                hoverRadius: 8, // Balanced hover sensitivity for growing effect
+                events: ['click'], // CRITICAL: Only trigger tooltip on click, not on mousemove
                 callbacks: {
                     // Title callback still used by external handler
                     title: function (tooltipItems) {
@@ -634,6 +642,16 @@ nbacc_plotter_data = (() => {
 
         // Store a direct reference to the original chart data in the config object
         chartConfig.chartData = chartData;
+        
+        // Also store pointMarginData in the config for access in tooltip handlers
+        chartConfig.pointMarginData = pointMarginData;
+        
+        // Also store each line's m and b coefficients directly for easier access in tooltips
+        chartConfig.lineCoefficients = chartData.lines.map(line => ({
+            legend: line.legend,
+            m: line.m,
+            b: line.b
+        }));
 
         // Do not add datasets here - this will be handled by nbacc_plotter_core.js
         // Just prepare the config with the necessary data structures
@@ -665,42 +683,83 @@ nbacc_plotter_data = (() => {
         // Get the x-value (point margin)
         const xValue = parseFloat(dataPoint.x).toFixed(0);
 
-        // Check if we have pre-calculated data for this point margin
-        if (!pointMarginData[xValue]) return "";
-
         let bodyHtml = "";
         const colors = getColorWheel(0.8);
+        
+        // Get line coefficients from the chart
+        const lineCoefficients = context.chart.lineCoefficients || 
+                                (context.chart.options && context.chart.options.lineCoefficients) || 
+                                [];
 
-        // Loop through all lines and add their data
-        Object.entries(pointMarginData[xValue]).forEach(([legend, data], i) => {
-            // Remove the "(XXXX Total Games)" part from the legend text
-            const cleanLegend = legend.replace(/\s+\(\d+\s+Total\s+Games\)$/, "");
-
-            // Get the color for this line
-            const color = colors[i % colors.length];
-
-            // Responsive font sizes
-            const legendFontSize = isMobile() ? "10.5px" : "14px";
-
-            // Create content based on plot type
-            let lineContent = "";
-            if (context.chart.plotType === "time_v_point_margin") {
-                // Show point values for time_v_point_margin
-                lineContent = `<span class="color-indicator" style="background-color:${color};"></span>
-            <span class="legend-text">${cleanLegend}:</span> <span class="legend-text">${data.pointValue.toFixed(
-                    2
-                )} Points</span>`;
-            } else {
-                // Show win percentages for point_margin_v_win_percent
-                lineContent = `<span class="color-indicator" style="background-color:${color};"></span>
-            <span class="legend-text">${cleanLegend}:</span> <span class="legend-text">Win %= ${data.winPercent}</span>`;
+        // For point_margin_v_win_percent plots, we must use the line coefficients
+        if (context.chart.plotType === "point_margin_v_win_percent") {
+            // Must have line coefficients available
+            if (lineCoefficients.length === 0 || typeof Num === 'undefined') {
+                throw new Error("Line coefficients or Num class not available for tooltip calculation");
             }
-
-            // Add to body HTML (R-squared functionality has been removed)
-            bodyHtml += `<tr><td>
-            ${lineContent}
-        </td></tr>`;
-        });
+            
+            lineCoefficients.forEach((lineCoef, i) => {
+                // Must have m and b coefficients
+                if (lineCoef.m === undefined || lineCoef.b === undefined) {
+                    throw new Error(`Missing m or b coefficient for line ${lineCoef.legend}`);
+                }
+                
+                // Calculate y-value using line equation y = mx + b
+                const y = lineCoef.m * parseInt(xValue) + lineCoef.b;
+                
+                // Calculate win percentage using normalCDF
+                const winPercentage = (100.0 * Num.CDF(y)).toFixed(2);
+                
+                // Get the color for this line
+                const color = colors[i % colors.length];
+                
+                // Remove the "(XXXX Total Games)" part from the legend text
+                const cleanLegend = lineCoef.legend.replace(/\s+\(\d+\s+Total\s+Games\)$/, "");
+                
+                // Show win percentages
+                const lineContent = `<span class="color-indicator" style="background-color:${color};"></span>
+                <span class="legend-text">${cleanLegend}:</span> <span class="legend-text">Win %= ${winPercentage}</span>`;
+                
+                // Add to body HTML
+                bodyHtml += `<tr><td>
+                ${lineContent}
+            </td></tr>`;
+            });
+        }
+        // For time_v_point_margin plots, use pre-calculated data
+        else if (context.chart.plotType === "time_v_point_margin") {
+            // Must have pre-calculated point margin data
+            if (!pointMarginData[xValue]) {
+                throw new Error(`No pre-calculated data available for time ${xValue}`);
+            }
+            
+            // Loop through all lines and add their data from pre-calculated values
+            Object.entries(pointMarginData[xValue]).forEach(([legend, data], i) => {
+                // Pre-calculated data must contain pointValue
+                if (data.pointValue === undefined) {
+                    throw new Error(`Missing pointValue for line ${legend} at time ${xValue}`);
+                }
+                
+                // Remove the "(XXXX Total Games)" part from the legend text
+                const cleanLegend = legend.replace(/\s+\(\d+\s+Total\s+Games\)$/, "");
+    
+                // Get the color for this line
+                const color = colors[i % colors.length];
+    
+                // Show point values for time_v_point_margin
+                const lineContent = `<span class="color-indicator" style="background-color:${color};"></span>
+                <span class="legend-text">${cleanLegend}:</span> <span class="legend-text">${data.pointValue.toFixed(
+                        2
+                    )} Points</span>`;
+    
+                // Add to body HTML
+                bodyHtml += `<tr><td>
+                ${lineContent}
+            </td></tr>`;
+            });
+        } else {
+            throw new Error(`Unknown plot type: ${context.chart.plotType}`);
+        }
 
         return bodyHtml;
     }
@@ -1337,5 +1396,8 @@ nbacc_plotter_data = (() => {
         pointMarginData,
         externalTooltipHandler,
         createWinCountPlugin,
+        // Export tooltip generation functions for use in other modules
+        generateRegressionLineTooltipBody,
+        generateScatterPointTooltipBody
     };
 })();

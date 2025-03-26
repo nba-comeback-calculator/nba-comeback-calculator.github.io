@@ -69,23 +69,23 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-    <script src="../_static/js/nbacc_utils.js?v=59e32e8b"></script>
+    <script src="../_static/js/nbacc_utils.js?v=8ead9552"></script>
     <script src="../_static/js/nbacc_saveas_image_dialog.js?v=e8366de8"></script>
-    <script src="../_static/js/nbacc_plotter_plugins.js?v=d752b38d"></script>
+    <script src="../_static/js/nbacc_plotter_plugins.js?v=d9818828"></script>
     <script src="../_static/js/nbacc_calculator_num.js?v=9958ae1e"></script>
-    <script src="../_static/js/nbacc_plotter_data.js?v=36e98824"></script>
-    <script src="../_static/js/nbacc_plotter_core.js?v=fc2a5251"></script>
+    <script src="../_static/js/nbacc_plotter_data.js?v=efe16fc8"></script>
+    <script src="../_static/js/nbacc_plotter_core.js?v=a0b508fa"></script>
     <script src="../_static/js/nbacc_plotter_ui.js?v=08af42ae"></script>
-    <script src="../_static/js/nbacc_chart_loader.js?v=3d56bee1"></script>
+    <script src="../_static/js/nbacc_chart_loader.js?v=c6958e6b"></script>
     <script src="../_static/js/nbacc_calculator_season_game_loader.js?v=0c267cdf"></script>
     <script src="../_static/js/nbacc_calculator_plot_primitives.js?v=eb3a0bff"></script>
     <script src="../_static/js/nbacc_calculator_api.js?v=71cfeb41"></script>
-    <script src="../_static/js/nbacc_calculator_state.js?v=609f77bd"></script>
-    <script src="../_static/js/nbacc_calculator_ui.js?v=9e26f8b6"></script>
+    <script src="../_static/js/nbacc_calculator_state.js?v=03064e29"></script>
+    <script src="../_static/js/nbacc_calculator_ui.js?v=7b8c96f3"></script>
     <script src="../_static/js/nbacc_calculator_init.js?v=a68fa125"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Plots" href="../plots/index.html" />
+    <link rel="next" title="Do the Timberwolves Actually Give Up Big Leads?" href="do_the_twolves_give_up_big_leads.html" />
     <link rel="prev" title="20 is the New 18" href="20_is_new_18.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -180,13 +180,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../methodology/index.html">
-    Methodology
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../calculator/index.html">
     Calculator
   </a>
@@ -254,13 +247,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../plots/index.html">
     Plots
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../methodology/index.html">
-    Methodology
   </a>
 </li>
 
@@ -350,29 +336,33 @@
 <h1>A Rule Of Thumb That Actually Works If Your Thumb Is Good At Math<a class="headerlink" href="#a-rule-of-thumb-that-actually-works-if-your-thumb-is-good-at-math" title="Link to this heading">#</a></h1>
 <section id="a-rule-of-thumb">
 <span id="id1"></span><h2>A Rule Of Thumb<a class="headerlink" href="#a-rule-of-thumb" title="Link to this heading">#</a></h2>
-<p>What started all of this is I had this rule of thumb about whether my team’s lead
-was “safe”:</p>
+<p><a class="reference internal" href="about.html"><span class="doc">What started all of this</span></a> is, I had this rule of thumb about
+whether my team’s lead was “safe”:</p>
 <ul class="simple">
 <li><p>2 times the number of minutes remaining = pretty safe</p></li>
 <li><p>3 times the number of minutes remaining = very safe</p></li>
 </ul>
-<p>So now, after much effort, we can plot the <span class="xref std std-ref">percent point plots</span> like
-this one:</p>
-<div id="thumb/nbacc_points_versus_time_all_eras" class="nbacc-chart"></div><p>And then plot those 2x and 3x guides on top we get:</p>
+<p>And I wanted to see how well it held up against real data. So now, after some effort,
+we can plot the <a class="reference internal" href="understanding_and_using_the_plots.html#percent-chance-of-winning-time-v-points-down"><span class="std std-ref">percent point plots</span></a> like this one:</p>
+<div id="thumb/nbacc_points_versus_time_all_eras" class="nbacc-chart"></div><p>And then plot those 2x and 3x guides on top of it and we get:</p>
 <div id="thumb/nbacc_points_versus_time_with_bad_guides_all_eras" class="nbacc-chart"></div><p>So, in short, a very bad rule of thumb.</p>
-<p>So I was delighted <a class="reference external" href="https://messymatters.com/moneyball/">to have stumbled on this explanation</a>:</p>
+<p>So – in googling about to see if someone had a better one – I was delighted <a class="reference external" href="https://messymatters.com/moneyball/">to have
+stumbled on this explanation</a>:</p>
 <blockquote class="pull-quote">
 <div><p>“An NBA team leading by twice the square root of minutes left in the game has an
 80% chance of winning.”</p>
 </div></blockquote>
-<p>This turns out to be very close, no matter the era you look at.  In fact, leveraging the
-<span class="xref std std-ref">observation that win probabilities versus point deficit are normally distributed</span>, we can actually come up with the multiplier for any given win probability:</p>
+<p>This turns out to be very close, no matter the era you look at.  In fact, leveraging
+the <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">observation that win probabilities versus point deficit are normally
+distributed</span></a>, we can actually come up with the
+multiplier for any given win probability:</p>
 <div class="math notranslate nohighlight">
 \[\text{Points Down} \approx 2.49 \cdot \Phi^{-1}(\text{% Win Chance}) \cdot \sqrt{\text{Minutes Remaining}}\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\Phi^{-1}\)</span> is the inverse of the standard normal cumulative distribution
-function and the <code class="docutils literal notranslate"><span class="pre">2.49</span></code> constant is when you look at all data from 1996 to now (if you
-change the conditions, that number changes, usually slightly).  This leads to the
-following chart:</p>
+function and the <code class="docutils literal notranslate"><span class="pre">2.49</span></code> constant is when you look at all data from 1996 to now (if
+you change the conditions, that number changes, usually slightly <a class="reference internal" href="#best-fit-guides"><span class="std std-ref">as explained
+below</span></a>).  This allows us to expand this rule for the (more
+interesting) 5% and close to snowball’s chance in hell of 1%:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Percent Chance</p></th>
@@ -393,19 +383,53 @@ following chart:</p>
 </table>
 </div>
 <p>Looking at all the years from 1996 to 2024 we get:</p>
-<div id="thumb/nbacc_points_versus_time_with_guides_all_eras" class="nbacc-chart"></div><p>Which you can see holds up very nicely.  (In fact, even later, found <a class="reference external" href="https://www.slate.com/articles/sports/sports_nut/2015/06/golden_state_warriors_championship_a_new_formula_for_predicting_lead_changes.html">which is another
-example of the square root rule</a>
+<div id="thumb/nbacc_points_versus_time_with_guides_all_eras" class="nbacc-chart"></div><p>Which you can see holds up very nicely.  (In fact, even later on, I stumbled upon this
+<a class="reference external" href="https://www.slate.com/articles/sports/sports_nut/2015/06/golden_state_warriors_championship_a_new_formula_for_predicting_lead_changes.html">which is another example of the square root rule</a>
 but for the 90% probability case).</p>
+<p>For a lot of numbers, it’s hard to take the square root in your head, but for 16, 9, 4
+and 1 it’s easy:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Time Left</p></th>
+<th class="head"><p>20% Chance of Coming Back</p></th>
+<th class="head"><p>5% Chance of Coming Back</p></th>
+<th class="head"><p>1% Chance of Coming Back</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>16 Minutes</p></td>
+<td><p>2 * √16 = 8 Points</p></td>
+<td><p>4 * √16 = 16 Points</p></td>
+<td><p>6 * √16 = 24 Points</p></td>
+</tr>
+<tr class="row-odd"><td><p>9 Minutes</p></td>
+<td><p>2 * √9 = 6 Points</p></td>
+<td><p>4 * √9 = 12 Points</p></td>
+<td><p>6 * √9 = 18 Points</p></td>
+</tr>
+<tr class="row-even"><td><p>4 Minutes</p></td>
+<td><p>2 * √4 = 4 Points</p></td>
+<td><p>4 * √4 = 8 Points</p></td>
+<td><p>6 * √4 = 12 Points</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 Minute</p></td>
+<td><p>2 * √1 = 2 Points</p></td>
+<td><p>4 * √1 = 4 Points</p></td>
+<td><p>6 * √1 = 6 Points</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="best-fit-guides">
 <span id="id2"></span><h2>Best Fit Guides<a class="headerlink" href="#best-fit-guides" title="Link to this heading">#</a></h2>
-<p>Now, you can – for any given situation – calculate the best fit guides that fit
-a little better than the 2, 4, 6 times the square root of minutes remaining. For
-example, for all eras you get:</p>
+<p>Now, you can – for any given situation – calculate the best fit guides that fit a
+little better than the 2, 4, 6 times the square root of minutes remaining. For example,
+for all eras you get:</p>
 <div id="thumb/nbacc_points_versus_time_with_calculated_guides_all_eras" class="nbacc-chart"></div><p>Which is very close to the 2, 4, 6 times the square root of minutes remaining number,
-but fits a little better.</p>
-<p>As you change conditions, the constant changes, but usually just slightly.  For example,
-if we look at just at the “old school” era (1996-2016), we get:</p>
+but fits a little bit better.</p>
+<p>As you change conditions, the constant changes, but usually just slightly.  For
+example, if we look at just at the “old school” era (1996-2016), we get:</p>
 <div class="math notranslate nohighlight">
 \[\text{Points Down} \approx 2.43 \cdot \Phi^{-1}(\text{% Win Chance}) \cdot \sqrt{\text{Minutes Remaining}}\]</div>
 <p>Which is this plot:</p>
@@ -414,11 +438,12 @@ if we look at just at the “old school” era (1996-2016), we get:</p>
 \[\text{Points Down} \approx 2.66 \cdot \Phi^{-1}(\text{% Win Chance}) \cdot \sqrt{\text{Minutes Remaining}}\]</div>
 <p>Which is this plot:</p>
 <div id="thumb/nbacc_points_versus_time_with_guides_modern_era" class="nbacc-chart"></div><p>Showing there is a slight difference in the constants.  But the rule of thumb is still
-very close.  You can use the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator page</span></a> to see how it
-works for any given situation and add the ‘Calculated Guides’ to your conditions.
-Normally, the 2, 4, 6 times the square root of minutes remaining guides are very close,
-unless the conditions are “A top 10 team playing a bottom 10 team” – then it’s very
-different.</p>
+very close to accurate.</p>
+<p>You can use the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator page</span></a> to see how it works for any
+given situation and add the ‘Calculated Guides’ to your conditions. Normally, the 2, 4,
+6 times the square root of minutes remaining guides are very close to optimal.  But for some
+conditions – like a top 10 team playing a bottom 10 team – then this rule of thumb
+does not hold up at all.</p>
 </section>
 </section>
 

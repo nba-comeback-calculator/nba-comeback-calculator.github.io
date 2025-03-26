@@ -286,6 +286,17 @@ window.externalTooltipHandler = (context) => {
             return;
         }
         
+        // We've configured chart.js to allow hover effects but only show tooltips on click
+        // Check if this is a mousemove/hover event (not a click) and tooltip isn't sticky
+        const eventType = context.event?.type || '';
+        if ((eventType === 'mousemove' || eventType !== 'click') && 
+            tooltipEl.getAttribute("data-sticky") !== "true") {
+            // Hide any existing tooltip immediately on hover events
+            tooltipEl.style.opacity = 0;
+            tooltipEl.style.display = 'none';
+            return; // Exit without showing tooltip for hover events
+        }
+        
         // Handle tooltip visibility based on model state and stickiness
         if (!handleTooltipVisibility(tooltipEl, tooltipModel)) {
             return; // Exit if tooltip should be hidden
@@ -509,12 +520,29 @@ function generateTooltipContent(
         
         if (datasetIndex % 2 === 0 && !isCalculateOccurrences) {
             // This is a regression line - show all regression data for this x-value
-            innerHtml += generateRegressionLineTooltipBody(
-                context,
-                dataset,
-                index,
-                pointMarginData || {}
-            );
+            // Make sure we have access to the chart's specific pointMarginData and lineCoefficients
+            const chartPointMarginData = context.chart.pointMarginData || 
+                                       (context.chart.options && context.chart.options.pointMarginData) || 
+                                       {};
+            
+            try {
+                // Always use nbacc_plotter_data.generateRegressionLineTooltipBody if available
+                if (typeof nbacc_plotter_data !== 'undefined' && 
+                    typeof nbacc_plotter_data.generateRegressionLineTooltipBody === 'function') {
+                    innerHtml += nbacc_plotter_data.generateRegressionLineTooltipBody(
+                        context,
+                        dataset,
+                        index,
+                        chartPointMarginData
+                    );
+                } else {
+                    // No fallback - must have the primary function available
+                    throw new Error("nbacc_plotter_data.generateRegressionLineTooltipBody function is not available");
+                }
+            } catch (error) {
+                console.error("Error generating tooltip content:", error);
+                innerHtml += `<tr><td>Error generating tooltip: ${error.message}</td></tr>`;
+            }
         } else if (dataset && dataset.type === "scatter") {
             // This is a scatter point - show game examples
             innerHtml += generateScatterPointTooltipBody(
