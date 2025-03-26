@@ -347,8 +347,8 @@ the noise so we can compare two datasets as best we can.</p>
 <section id="how-to-form-the-trend-lines">
 <span id="id2"></span><h2>How To Form The Trend Lines<a class="headerlink" href="#how-to-form-the-trend-lines" title="Link to this heading">#</a></h2>
 <p>Usually, the best model is a line.  However, our data is not linear with respect to
-probability.  For example, look at the points down at the half plot for the last 8
-years when plotted on a linear y axis:</p>
+probability.  For example, look at the points down at the half when plotted on a linear
+y axis:</p>
 <div id="trend/nbacc_at_24_linear_axis" class="nbacc-chart"></div><p>As is, this is not very useful, as all the events we care about are smooshed down
 together at the bottom of the y-axis.</p>
 <p>What we can do, however, is find a function which will convert our non-linear data to a
@@ -380,9 +380,9 @@ the <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span clas
 (MLE), which gives us the most statistically sound way of finding our model (as opposed
 to, say, linear regression) .</p>
 <p>The major question is whether to use logit or probit.  And the answer is probit because
-the inverse CDF function does a better job of linearizing our data, meaning it is
-more likely to be the correct underlying model.  Looking at the tail using the two
-methods we get:</p>
+the inverse CDF function does a better job of linearizing our data, meaning it is more
+likely to be the correct underlying model.  Looking at the tail using the two methods
+we get:</p>
 <a class="reference internal image-reference" href="../_images/probit_v_logit.png"><img alt="../_images/probit_v_logit.png" class="align-center" src="../_images/probit_v_logit.png" style="width: 672.5400000000001px; height: 298.32px;" />
 </a>
 <p>As you can see, the inverse normal CDF does a better job at linearizing the data.</p>
