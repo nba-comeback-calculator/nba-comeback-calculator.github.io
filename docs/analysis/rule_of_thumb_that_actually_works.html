@@ -32,8 +32,8 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=51479823" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=f0f3e7ad" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=353f726d" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=79c8d671" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=b0690993" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-calculator.css?v=1694221e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basicLightbox/5.0.0/basicLightbox.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
@@ -352,7 +352,7 @@ stumbled on this explanation</a>:</p>
 <div><p>“An NBA team leading by twice the square root of minutes left in the game has an
 80% chance of winning.”</p>
 </div></blockquote>
-<p>This turns out to be very close, no matter the era you look at.  In fact, leveraging
+<p>This turns out to be very close, no matter which era you look at. In fact, leveraging
 the <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">observation that win probabilities versus point deficit are normally
 distributed</span></a>, we can actually come up with the
 multiplier for any given win probability:</p>
@@ -360,8 +360,8 @@ multiplier for any given win probability:</p>
 \[\text{Points Down} \approx 2.49 \cdot \Phi^{-1}(\text{% Win Chance}) \cdot \sqrt{\text{Minutes Remaining}}\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\Phi^{-1}\)</span> is the inverse of the standard normal cumulative distribution
 function and the <code class="docutils literal notranslate"><span class="pre">2.49</span></code> constant is when you look at all data from 1996 to now (if
-you change the conditions, that number changes, usually slightly <a class="reference internal" href="#best-fit-guides"><span class="std std-ref">as explained
-below</span></a>).  This allows us to expand this rule for the (more
+you change the conditions, that number changes, usually slightly, <a class="reference internal" href="#best-fit-guides"><span class="std std-ref">as explained
+below</span></a>). This allows us to expand this rule for the (more
 interesting) 5% and close to snowball’s chance in hell of 1%:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>

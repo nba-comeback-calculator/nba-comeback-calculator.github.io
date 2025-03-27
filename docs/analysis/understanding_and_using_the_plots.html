@@ -32,8 +32,8 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=51479823" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=f0f3e7ad" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=353f726d" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=79c8d671" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=b0690993" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-calculator.css?v=1694221e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basicLightbox/5.0.0/basicLightbox.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
@@ -355,10 +355,10 @@ climbed to .250 a season ago and is at .229 this season, meaning nearly one in
 every four games in which a team takes a double-digit lead ends with
 the-other-team-winning.</p>
 </div></blockquote>
-<p>That leads to this chart:</p>
-<div id="understand/nbacc_max_or_more_48_espn_0" class="nbacc-chart"></div><p>You can see the -10 point margin point lines up with his statistics exactly.</p>
+<p>This leads to this chart:</p>
+<div id="understand/nbacc_max_or_more_48_espn_0" class="nbacc-chart"></div><p>You can see the -10 point margin point lines up with these statistics exactly.</p>
 <p>It’s important to note here that every point contains all the wins and losses for the
-previous point margin. As we move from left to right, we are accumulating all the
+previous point margins. As we move from left to right, we are accumulating all the
 games. This means that a given point margin (say -10) is getting weighted down with
 all of the previous (and lower chance) probabilities, because the -10 point also
 includes the wins/losses from -11, -12, -13, …, -20, …, -30, and on and on.</p>
@@ -366,10 +366,10 @@ includes the wins/losses from -11, -12, -13, …, -20, …, -30, and on and on.<
 <section id="max-points-down">
 <span id="id2"></span><h2>Max Points Down<a class="headerlink" href="#max-points-down" title="Link to this heading">#</a></h2>
 <p>Even though this is a common way of talking about comebacks, it’s a little unfair in a
-sense. For the -10 point, the odds of coming back are weighted by all the other more
+sense. For the -10 point, the odds of coming back are weighted down by all the other more
 unlikely comebacks.</p>
 <p>A somewhat more fair way to look at it is: the max point you are down <em>at most</em> – that
-leads to these type of plots:</p>
+leads to these types of plots:</p>
 <div id="understand/nbacc_max_48_eras_1" class="nbacc-chart"></div><p>So here we see the raw data for the -10 points down is 53% for the modern era and 48%
 for the old school era. What this is saying is that, on average, the winning team goes
 down at most 10 points at some point in the game – and comes back! So if your team is
@@ -379,7 +379,7 @@ down 10 points, don’t sweat it too hard, it’s totally average.</p>
 <span id="id3"></span><h2>Points Down At Time<a class="headerlink" href="#points-down-at-time" title="Link to this heading">#</a></h2>
 <p>But what about when you’re watching a game and don’t have the benefit of hindsight to
 know what your max point deficit is going to be? As a fan, the most natural way to
-think of it – I am down this many points right now, what are the odds? In this case,
+think of it is – I am down this many points right now, what are the odds? In this case,
 you pick a certain point in time and collect all the point margins at that time and
 determine the chance of winning, leading to plots like this:</p>
 <div id="understand/nbacc_down_at_24_eras_1" class="nbacc-chart"></div><p>So that chart says things like: if your team is down 20 points at the half, they have a
@@ -401,12 +401,12 @@ deficit at that time and provide that point with game data.</p>
 </section>
 <section id="plot-controls">
 <span id="using-the-plot-controls"></span><h2>Plot Controls<a class="headerlink" href="#plot-controls" title="Link to this heading">#</a></h2>
-<p>For the plots you can hover over and then click on either:</p>
+<p>For the plots, you can hover over and then click on either:</p>
 <ol class="arabic simple">
 <li><p>Actual data taken from NBA games. This comes up when you click on the scatter plot
-points.  Here you can look at the # Wins / # Games, the calculated Win %, how often
+points. Here you can look at the # Wins / # Games, the calculated Win %, how often
 this point deficit occurs (win or lose), and a few of the games that make up this
-point. The reported games are also hyperlinks, so if you want to go to NBA.com and
+point. The reported games are also hyperlinks, so you can go to NBA.com and
 view the play-by-play report and media coverage if available.</p></li>
 <li><p>The trend line data points – this shows you the “best” Win % chance for this
 point deficit <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">since the trend line filters out much of the statistical noise</span></a>.</p></li>
