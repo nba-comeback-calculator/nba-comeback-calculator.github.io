@@ -335,33 +335,33 @@
 <h1>Using Claude Code To AI Auto Generate This Site<a class="headerlink" href="#using-claude-code-to-ai-auto-generate-this-site" title="Link to this heading">#</a></h1>
 <div class="box-container green-box docutils container" id="using-claude-code">
 <p>Having used Claude Code to put together this fairly complex website, I thought it
-might be useful to jot down some notes.  Being a total AI coding noob, I thought
+might be useful to jot down some notes. Being a total AI coding novice, I thought
 the better of this a few times for fear of putting out bad info, but nevertheless I
-thought these notes might be useful, esp. for someone in a similar starting place
+thought these notes might be useful, especially for someone in a similar starting place
 to myself.</p>
 </div>
 <section id="using-claude-code-for-development">
 <span id="id1"></span><h2>Using Claude Code for Development<a class="headerlink" href="#using-claude-code-for-development" title="Link to this heading">#</a></h2>
-<p>Like most devs these days, I’ve been aware of AI for some time.  Probably also like
-most devs I’ve never used it for anything large scale.  We are allowed to use AI at
+<p>Like most devs these days, I’ve been aware of AI for some time. Probably also like
+most devs I’ve never used it for anything large scale. We are allowed to use AI at
 work, just not with any of our codebase or any company data – so basically, not much
-to work with. So I’ve had my time kicking copilot around the block a bit, but always
+to work with. So I’ve had my time kicking Copilot around the block a bit, but always
 for fairly small things, functions that do specific scientific or statistical functions
-that you might find in the scipy or scikit learn library but are not there.  File
+that you might find in the SciPy or scikit-learn library but are not there. File
 parsing functions, etc.</p>
 <p>But I’ve had this feeling that you couldn’t really use AI for big things, for major
-pieces of code.  Surely, it couldn’t work on the codebases of the size <em>I</em> work on
+pieces of code. Surely, it couldn’t work on codebases of the size <em>I</em> work on
 [adjusts monocle].</p>
 <p>So when I got talking to another programmer friend about downloading this NBA data and
-running some quick one off python scripts against it, he had the idea of using AI to
-build out a front end tool.  Perfect.  Here was a project that was fairly large and
+running some quick one-off Python scripts against it, he had the idea of using AI to
+build out a front end tool. Perfect. Here was a project that was fairly large and
 involves both front end work and <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">number
-crunching</span></a> and is totally self contained and
+crunching</span></a> and is totally self-contained and
 won’t get me fired for doing it!</p>
 </section>
 <section id="choosing-claude-code-vs-other-tools">
 <span id="id2"></span><h2>Choosing Claude Code vs. Other Tools<a class="headerlink" href="#choosing-claude-code-vs-other-tools" title="Link to this heading">#</a></h2>
-<p>Before settling on Claude Code, I experimented with several AI coding assistants
+<p>Before settling on Claude Code, I experimented with several AI coding assistants,
 including Cursor (with both Claude 3.5 and 3.7 models).</p>
 <p>It didn’t take me long to find posts like these:</p>
 <ul class="simple">
@@ -371,16 +371,16 @@ including Cursor (with both Claude 3.5 and 3.7 models).</p>
 </ul>
 <p>Among many others.</p>
 <p>To boot, I really like the decision they made to make the tool a REPL as opposed to
-having it integrated in an IDE.  I find that just suits me better, and I can more
+having it integrated in an IDE. I find that just suits me better, and I can more
 easily separate my editing functions from “now I’m AIing” brain mode (even though I
-still mostly use vscode with copilot or cursor to do my editing).</p>
+still mostly use VSCode with Copilot or Cursor to do my editing).</p>
 <div class="box-container green-box docutils container">
 <p>In the beginning of this project I did take the time to carefully commit my code, ask
 Claude to do a fairly complex edit on multiple files, check the results, revert back
-and ask Cursor to do the same thing.  It didn’t take long before I gave up on Cursor
+and ask Cursor to do the same thing. It didn’t take long before I gave up on Cursor
 for complicated edits, even though on smaller things they can perform at a similar
 level.</p>
-<p>Often, the output was close or just as good.  But many times it was not workable and
+<p>Often, the output was close or just as good. But many times it was not workable and
 I tended to just use Claude Code more and more often.</p>
 </div>
 </section>
@@ -389,7 +389,7 @@ I tended to just use Claude Code more and more often.</p>
 <p>In broad strokes, I:</p>
 <ul class="simple">
 <li><p>Wrote the majority of the code that processes the NBA play-by-play game data in
-Python. This Python would, based on various conditions, form the necessary data
+Python. This Python code would, based on various conditions, form the necessary data
 structures, run the statistical processing code, and then create structured JSON
 files that contained everything needed to make a plot (including titles, axis labels,
 hover point data, etc).</p></li>
@@ -830,45 +830,45 @@ library. Once I had that in place, plots finally started popping up on the page.
 <span id="id9"></span><h2>The More You Use It, The More Ways You See How You Can Use It<a class="headerlink" href="#the-more-you-use-it-the-more-ways-you-see-how-you-can-use-it" title="Link to this heading">#</a></h2>
 <p>One thing I noticed was, as I got more used to using Claude Code, I started to see how
 I could use it in many different places.</p>
-<p>For example, I had a test.html site to test my JavaScript front end and there would
-setup JavaScript and CSS CDN sites. Pretty soon I was asking Claude to strip through
-this document and auto update my sphinx conf.py file I needed to build the final site.</p>
-<p>Also, I wanted a different sphinx directive than the pylab <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">note::</span></code> was giving me,
+<p>For example, I had a test.html site to test my JavaScript front end and had set up
+JavaScript and CSS CDN links. Pretty soon I was asking Claude to strip through
+this document and auto-update my Sphinx conf.py file I needed to build the final site.</p>
+<p>Also, I wanted a different Sphinx directive than the pylab <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">note::</span></code> was giving me,
 so I asked Claude to write a <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">green-box::</span></code> directive and it did it first time,
-made the sphinx extension, cost me about 50 cents and I was on my way.</p>
-<p>Finally, I had it help out writing the sphinx rst pages quite a bit.  This page in
-particular I would use it to get me some starting headers and make a bunch or url links
-and other odds and ends that save a lot of time.  It’s prose style tho is still, well,
+made the Sphinx extension, cost me about 50 cents and I was on my way.</p>
+<p>Finally, I had it help out writing the Sphinx RST pages quite a bit. This page in
+particular I would use it to get me some starting headers and make a bunch of URL links
+and other odds and ends that save a lot of time. Its prose style though is still, well,
 generic and AI-y so I wrote all of the actual prose myself.</p>
-<p>And also, for little things, in Cursor I was having it write the Latex in the rst
-pages, add unicode characters and on and on.  Code completion on steriods in a sense.</p>
+<p>And also, for little things, in Cursor I was having it write the LaTeX in the RST
+pages, add Unicode characters and on and on. Code completion on steroids in a sense.</p>
 </section>
 <section id="about-the-cost">
 <span id="id10"></span><h2>About the Cost<a class="headerlink" href="#about-the-cost" title="Link to this heading">#</a></h2>
-<p>Yes, Claude code is <em>a lot</em> more expensive than, say, Cursor, I am into this well over
-$100 USD right now.  But still, cheap in the scheme when you think of what it does for
-you and how much time you saved.  Obviously, compared to dev costs, so cheap.  Plus, I
-learned a lot about many things along the way, more than I would have not using it.</p>
+<p>Yes, Claude Code is <em>a lot</em> more expensive than, say, Cursor. I am into this well over
+$100 USD right now. But still, it’s cheap in the grand scheme when you think of what it does for
+you and how much time you saved. Obviously, compared to dev costs, so cheap. Plus, I
+learned a lot about many things along the way, more than I would have if not using it.</p>
 </section>
 <section id="and-the-verdict-is">
 <span id="id11"></span><h2>And the Verdict Is …<a class="headerlink" href="#and-the-verdict-is" title="Link to this heading">#</a></h2>
-<p>Pretty much wow.  I mean, it’s not like you tell it “build me a website” and you’re
+<p>Pretty much wow. I mean, it’s not like you tell it “build me a website” and you’re
 done – it’s still a lot of work and takes a lot of iterations, debugging, missteps,
-and back tracking just like any coding project.</p>
+and backtracking just like any coding project.</p>
 <p>But it’s way faster and most often the code is better code than I would have written
-myself.  It just takes care of all those dotting I’s and crossing T’s type stuff that
+myself. It just takes care of all those dotting i’s and crossing t’s type stuff that
 as a project winds on you find yourself skipping.</p>
 <p>And after a while I found (say, after the Calculator form was stable), I could ask for
 updates and with the context it had from the CLAUDE.md and code comments, it would get
 the new features added with very little effort.</p>
 <p>For a project not as limited as this one, I think the next major step would be to more
-fully understand the code and use Claude to clean up unnecessary bloat, etc.  To get a
-firmer understanding of what you had before you started adding major new features.</p>
-<p>Or maybe not!  Maybe just fire and forget!</p>
+fully understand the code and use Claude to clean up unnecessary bloat, etc. To get a
+firmer understanding of what you have before you start adding major new features.</p>
+<p>Or maybe not! Maybe just fire and forget!</p>
 <p>But one thing stood out: I found it required much less cognitive load than having to
 type in everything yourself, check your curly braces, and a million other details,
-google for the umpteenth time about some stupid css rule you never ever wanted to know
-about, an on and on.  When Claude runs, it can take time.  But then your mind is free
+Google for the umpteenth time about some stupid CSS rule you never ever wanted to know
+about, and on and on. When Claude runs, it can take time. But then your mind is free
 to think about the next architecture steps or what you want the next feature to do.</p>
 </section>
 </section>
