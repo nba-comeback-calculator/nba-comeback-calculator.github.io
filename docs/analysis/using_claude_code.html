@@ -804,7 +804,7 @@ one using the <code class="docutils literal notranslate"><span class="pre">debug
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>when the equivalent Python code was <code class="docutils literal notranslate"><span class="pre">`range(start_time,</span> <span class="pre">stop_time,</span> <span class="pre">-1)</span></code>.  This is off
+<p>when the equivalent Python code was <code class="docutils literal notranslate"><span class="pre">range(start_time,</span> <span class="pre">stop_time,</span> <span class="pre">-1)</span></code>.  This is off
 by 1, leading to t being 0 in the javascript case, creating a really hard to pin down
 bug.</p>
 <p>Also, for some reason, it made a bunch of JavaScript namespaces like this:</p>
@@ -822,7 +822,7 @@ using primitives I knew were available in Math.js. However, the scipy.optimize.m
 proved a problem.</p>
 <p>Initially, Claude created a custom <cite>fmin</cite> minimization algorithm, but it didn’t work at
 all. After trying the numeric.js libs and a few others, I finally stumbled across this
-<a class="reference external" href="https://robertleeread.medium.com/a-brief-bad-ignorant-review-of-existing-numerical-optimization-software-in-javascript-further-c70f68641fda">rant about JavaScript numerical optimization</a>
+<a class="reference external" href="https://robertleeread.medium.com/a-brief-bad-ignorant-review-of-existing-numerical-optimization-software-in-javascript-further-c70f68641fda">absolute banger of a rant about JavaScript numerical optimization</a>
 which got me onto the <a class="reference external" href="https://github.com/benfred/fmin">fmin by Ben Frederickson</a>
 library. Once I had that in place, plots finally started popping up on the page.</p>
 </section>

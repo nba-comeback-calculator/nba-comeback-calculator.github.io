@@ -578,7 +578,7 @@ For example it created this code:
         times.push(t);
     }
 
-when the equivalent Python code was ```range(start_time, stop_time, -1)``.  This is off
+when the equivalent Python code was ``range(start_time, stop_time, -1)``.  This is off
 by 1, leading to t being 0 in the javascript case, creating a really hard to pin down
 bug.
 
@@ -601,7 +601,7 @@ proved a problem.
 
 Initially, Claude created a custom `fmin` minimization algorithm, but it didn't work at
 all. After trying the numeric.js libs and a few others, I finally stumbled across this
-`rant about JavaScript numerical optimization
+`absolute banger of a rant about JavaScript numerical optimization
 <https://robertleeread.medium.com/a-brief-bad-ignorant-review-of-existing-numerical-optimization-software-in-javascript-further-c70f68641fda>`_
 which got me onto the `fmin by Ben Frederickson <https://github.com/benfred/fmin>`_
 library. Once I had that in place, plots finally started popping up on the page.
