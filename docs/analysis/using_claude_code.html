@@ -84,6 +84,8 @@
     <script src="../_static/js/nbacc_calculator_init.js?v=a68fa125"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="About" href="about.html" />
+    <link rel="prev" title="Forming the Plot Trend Lines" href="forming_the_plot_trend_lines.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -162,7 +164,7 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Analysis
   </a>
@@ -218,8 +220,6 @@
       
       
       
-        
-      
       <dialog id="pst-primary-sidebar-modal"></dialog>
       <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
@@ -236,7 +236,7 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Analysis
   </a>
@@ -311,6 +311,9 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Analysis</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Using Claude Code</span></li>
   </ul>
 </nav>
@@ -330,9 +333,493 @@
                   
   <section id="using-claude-code">
 <h1>Using Claude Code<a class="headerlink" href="#using-claude-code" title="Link to this heading">#</a></h1>
+<div class="box-container blue-box docutils container" id="id1">
+<p>Having used Claude Code to put together this fairly complex website, I thought it
+might be useful to jot down some notes.  Being a total AI coding noob, I thought
+the better of this a few times for fear of putting out bad info, but nevertheless I
+thought these notes might be useful, esp. for someone in a similar starting place
+to myself.</p>
+</div>
 <section id="using-claude-code-for-development">
-<span id="id1"></span><h2>Using Claude Code for Development<a class="headerlink" href="#using-claude-code-for-development" title="Link to this heading">#</a></h2>
-<p>This page will contain details about how Claude Code was used to build the JavaScript front end for this project.</p>
+<span id="id2"></span><h2>Using Claude Code for Development<a class="headerlink" href="#using-claude-code-for-development" title="Link to this heading">#</a></h2>
+<p>Like most devs these days, I’ve been aware of AI for some time.  And maybe like most,
+not sure the stats, I’ve never used it for anything large scale.  We are allowed to use
+AI at work, just not with any of our codebase or any company data.  So I’ve had my time
+kicking copilot around the block a bit, but always for <em>very</em> small things, functions
+that do specific scientific or statistical functions that you might find in the scipy
+or scikit learn library but are not there.</p>
+<p>But I’ve had this feeling that you couldn’t really use AI for big things, for major
+pieces of code.  Surely, it couldn’t work on the codebases of the size <em>I</em> work on
+[adjusts monocle].</p>
+<p>So when I got talking to a friend about downloading this NBA data and running some
+quick one off python scripts against it, he had the idea of using AI to build out a
+front end tool.  Perfect.  Here was a project that was fairly large and involves both
+front end work and <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">number crunching</span></a> and
+is totally self contained and won’t get me fired for doing it!</p>
+</section>
+<section id="choosing-claude-code-vs-other-tools">
+<span id="id3"></span><h2>Choosing Claude Code vs. Other Tools<a class="headerlink" href="#choosing-claude-code-vs-other-tools" title="Link to this heading">#</a></h2>
+<p>Before settling on Claude Code, I experimented with several AI coding assistants
+including Cursor (with both Claude 3.5 and 3.7 models).</p>
+<p>It didn’t take me long to find posts like these:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://waleedk.medium.com/claude-code-top-tips-lessons-from-the-first-20-hours-246032b943b4">Lessons from 20 hours with Claude Code</a></p></li>
+<li><p><a class="reference external" href="https://www.reddit.com/r/cursor/comments/1j21lo8/cursor_vs_claude_code/">Cursor vs. Claude Code comparison on Reddit</a></p></li>
+<li><p><a class="reference external" href="https://www.haihai.ai/cursor-vs-claude-code/">HaiHai.ai’s detailed comparison</a></p></li>
+</ul>
+<p>Right away, I really like the decision they made to make the tool a CLI as opposed to
+having it integrated in an IDE.  I find that just suits me better, and I can more
+easily separate my editing functions from “now I’m AIing” brain mode (even though I
+still mostly use vscode with copilot or cursor to do my editing).</p>
+<p>It seems pretty clear, at least at the time of this writing in March 2025, Claude Code
+is state of the art.</p>
+<div class="box-container blue-box docutils container">
+<p>In the beginning of this project I did take the time to carefully commit my code, ask
+Claude to do a fairly complex edit on multiple files, check the results, revert back
+and ask Cursor to do the same thing.  It didn’t take long before I gave up on Cursor
+for complicated edits, even though on smaller things they can perform at a similar
+level.</p>
+</div>
+</section>
+<section id="basic-scope-of-work">
+<span id="id4"></span><h2>Basic Scope Of Work<a class="headerlink" href="#basic-scope-of-work" title="Link to this heading">#</a></h2>
+<p>In broad strokes, I:</p>
+<ul class="simple">
+<li><p>Wrote the majority of the code that processes the NBA play-by-play game data in
+python.  This python would, based on various conditions, form the necessary data
+structures, run the statistical processing code, and then create structured json
+files that contained everything needed to make a plot (including titles, axis labels,
+hover point data, etc).</p></li>
+<li><p>Used Claude to 1. understand these json blobs and 2. write a
+<a class="reference external" href="https://www.chartjs.org/">chart.js</a> front end that could plot these json data
+files, add the hover boxes, add the custom full screen (using <a class="reference external" href="https://basiclightbox.electerious.com/">basicLightbox</a>) and everything you see when you interact
+with a chart.  I did jump in now and then to fix things, refactor, etc, but mostly I
+let Claude do the work via prompts.</p></li>
+<li><p>Then, asked Claude code <a class="reference internal" href="#using-the-devil-you-know"><span class="std std-ref">to convert my analysis python
+code</span></a> so the game processing could happen in the browser to
+build the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator</span></a></p></li>
+</ul>
+<p>You can explore the complete source code for this project at
+<a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator">github.com/nba-comeback-calculator/nba-comeback-calculator</a>, which includes
+all the Claude-assisted JavaScript implementation found in the site’s <cite>/_static/</cite>
+directory.</p>
+</section>
+<section id="some-initial-thoughts-and-observations">
+<span id="id5"></span><h2>Some Initial Thoughts and Observations<a class="headerlink" href="#some-initial-thoughts-and-observations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#requirements-are-key-but-it-s-ok-to-be-lazy">Requirements Are Key, But It’s OK To Be Lazy</a>: Let Claude clarify your thinking.</p></li>
+<li><p><a class="reference internal" href="#commit-ask-for-small-features-one-at-a-time-diff-test-and-then-commit-a-few-more-times-for-good-measure">Commit, Ask for Small Features, One at a Time, Diff, Test, and Then Commit A Few
+More Times For Good Measure</a>: It’s way easier to back out of small changes than big
+ones.</p></li>
+<li><p><a class="reference internal" href="#don-t-throw-good-money-after-bad">Don’t Throw Good Money After Bad</a>:  After a few times trying to get it to fix an
+error, you’re just going to have to roll up your selves and figure out what is
+actually wrong.</p></li>
+<li><p><a class="reference internal" href="#id6">Totally Starting Over Is Also A Good Strategy</a>: Sometimes, the second time – with
+the benefit of hindsight guiding your already on disk CLAUDE.md requirements – is
+the charm.</p></li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#id7">Watch Out For Needless Error Handling</a>: Often, Claude insert needless</dt><dd><p>error handling / fallback implementation behavior that creates more subtle, harder
+to track down bugs.</p>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#id8">Using The Devil You Know</a>: Writing code in your goto language and having Claude
+translate your complex logic into other domains works well.</p></li>
+<li><p><a class="reference internal" href="#id9">The More You Use It, The More Ways You See How You Can Use It</a>: so many places
+to automate.</p></li>
+</ul>
+</section>
+<section id="requirements-are-key-but-it-s-ok-to-be-lazy">
+<span id="requirements-are-key-but-its-ok-to-be-lazy"></span><h2>Requirements Are Key, But It’s OK To Be Lazy<a class="headerlink" href="#requirements-are-key-but-it-s-ok-to-be-lazy" title="Link to this heading">#</a></h2>
+<p>As has been noted many times about using AI coding, the cleaner, the clearer, the just
+plain better the requirements are, the better the results.  You need to feed in clearly
+defined rules and goals and lots of people have written and commented on this step.</p>
+<p>For Claude, this is baked in with CLAUDE.md files, and you will see them littered about
+in this project and other supplemental .md files (like the <a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/blob/main/docs/frontend/source/_static/CALCULATOR.md">CALCULATOR.md</a>).</p>
+<p>But writing good specifications takes time and effort and, being <a class="reference external" href="https://thethreevirtues.com/">lazy is one of the 3
+virtues of being a good dev</a>.  So with that goal in
+mind, I found myself starting to use Claude more and more to write the CLAUDE.md file
+and other requirements.  I would just paste in text I would be embarrassed for people
+to see and ask it to clean it up, read the CLAUDE.md, ask it to tweak it again, mash my
+hand against the keyboard a few more times, and then, voilà, a working spec it could
+then use to write code against.  (For example, <a class="reference internal" href="#url-mashup"><span class="std std-ref">the spec I fed into it to do the
+form URL encoding was barely English</span></a>).</p>
+</section>
+<section id="commit-ask-for-small-features-one-at-a-time-diff-test-and-then-commit-a-few-more-times-for-good-measure">
+<span id="commit-ask-for-small-features"></span><h2>Commit, Ask for Small Features, One at a Time, Diff, Test, and Then Commit A Few More Times For Good Measure<a class="headerlink" href="#commit-ask-for-small-features-one-at-a-time-diff-test-and-then-commit-a-few-more-times-for-good-measure" title="Link to this heading">#</a></h2>
+<div class="box-container blue-box docutils container">
+<p>Just a quick note, claude Code also shines at doing your git commits for you, which I
+did from time to time.  But I found myself being a cheapskate and, this being sort of
+a toy project, did that myself most of the time.</p>
+</div>
+<p>The most effective workflow I discovered was to break development into small,
+well-defined tasks. This approach produced much better results than requesting large
+features or complex implementations all at once.</p>
+<p>When I was my best self, I did:</p>
+<ol class="arabic simple">
+<li><p>Commit current working code to establish a clean baseline</p></li>
+<li><p>Ask Claude for a specific, focused feature</p></li>
+<li><p>Review the changes with git diff to verify functionality</p></li>
+<li><p>Test the implementation before moving on</p></li>
+<li><p>Commit working code before requesting the next feature</p></li>
+</ol>
+<p>Then, if you get yourself into a bad state you don’t want to debug (which happened many
+times) you can easily revert.</p>
+<p>For example, when implementing the calculator UI, I started with basic dialog
+functionality, then incrementally added form controls, state management and URL
+encoding with simple, focused requests.</p>
+<p>Except when I didn’t do this and got into a bit of trouble, as described below.</p>
+</section>
+<section id="don-t-throw-good-money-after-bad">
+<span id="dont-throw-good-money-after-bad"></span><h2>Don’t Throw Good Money After Bad<a class="headerlink" href="#don-t-throw-good-money-after-bad" title="Link to this heading">#</a></h2>
+<p>One thing I found that once you ask Claude to fix something, if it doesn’t fix it,
+asking it to fix it over and over can lead to a bigger mess.  It’s better, after one or
+maybe two failures, to jump in with a debugger and figure it out yourself.</p>
+<p>You might not even need to totally fix it yourself, but rather find where the problem
+is and guide it a bit.</p>
+<p>I made the mistake of repeatedly asking Claude to fix the issue, which only compounded
+the problem as each attempted fix introduced new complications:</p>
+<p>On the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator page</span></a>, the original versions of the
+bootstrap form were not remembering the options when you closed the form and reopened
+it. Related, I wanted a URL encoding scheme, so when you chose form options it encodes
+in the URL so you can email it to someone, etc.</p>
+<p>So I started by asking Claude:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">On</span> <span class="n">the</span> <span class="n">calculator</span> <span class="n">page</span> <span class="n">two</span> <span class="n">related</span> <span class="n">things</span><span class="p">:</span>
+<span class="mf">1.</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">remember</span> <span class="n">the</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span> <span class="n">form</span> <span class="n">so</span> <span class="n">that</span> <span class="n">when</span> <span class="n">we</span> <span class="n">bring</span> <span class="n">the</span> <span class="n">form</span> <span class="n">up</span> <span class="n">again</span><span class="p">,</span>
+<span class="n">the</span> <span class="n">last</span> <span class="n">values</span> <span class="n">are</span> <span class="n">there</span><span class="o">.</span>
+<span class="mf">2.</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">come</span> <span class="n">up</span> <span class="k">with</span> <span class="n">an</span> <span class="n">encoding</span> <span class="n">scheme</span> <span class="n">to</span> <span class="n">encode</span> <span class="n">the</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span> <span class="n">form</span> <span class="ow">in</span> <span class="n">the</span>
+<span class="n">url</span> <span class="n">so</span> <span class="k">if</span> <span class="n">you</span> <span class="n">send</span> <span class="n">someone</span> <span class="n">that</span> <span class="n">url</span><span class="p">,</span> <span class="n">that</span> <span class="n">exact</span> <span class="n">plot</span> <span class="n">comes</span> <span class="n">up</span><span class="o">.</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">register</span> <span class="k">if</span>
+<span class="n">there</span> <span class="n">are</span> <span class="n">additional</span> <span class="n">arguments</span> <span class="n">on</span> <span class="n">the</span> <span class="n">url</span><span class="p">,</span> <span class="ow">and</span><span class="p">,</span> <span class="k">if</span> <span class="n">so</span><span class="p">,</span> <span class="nb">set</span> <span class="n">up</span> <span class="n">the</span> <span class="n">state</span> <span class="nb">object</span> <span class="n">the</span> <span class="n">form</span>
+<span class="n">sets</span> <span class="n">up</span> <span class="ow">and</span> <span class="n">call</span> <span class="n">the</span> <span class="n">same</span> <span class="n">method</span> <span class="k">as</span> <span class="n">the</span> <span class="s2">&quot;Calculate&quot;</span> <span class="n">button</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">need</span> <span class="n">a</span> <span class="n">third</span> <span class="n">party</span>
+<span class="n">CDN</span><span class="p">,</span> <span class="n">that</span><span class="s1">&#39;s OK or you can code it yourself.</span>
+</pre></div>
+</div>
+<p>This is in stark violation of my <a class="reference internal" href="#commit-ask-for-small-features"><span class="std std-ref">rule about asking for isolated, small things
+one-at-a-time</span></a> – and also I forgot to commit.</p>
+<p>So it came back with the multiple changes, but the URL encoding scheme was really ugly
+and second the form was still not storing state, and third, when you entered in a URL
+it was not updating the chart. So I continued, gave it the most slurred half-baked spec
+for a URL encoding scheme, but mixed in about 3 or 4 different requests at the same
+time:</p>
+<div class="highlight-default notranslate" id="url-mashup"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">This</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">working</span> <span class="n">right</span><span class="o">.</span> <span class="n">The</span> <span class="n">Season</span> <span class="n">Ranges</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">Game</span> <span class="n">Filters</span> <span class="n">are</span> <span class="ow">not</span> <span class="n">persisting</span><span class="o">.</span>
+<span class="n">If</span> <span class="n">we</span> <span class="n">add</span> <span class="n">Season</span> <span class="n">Ranges</span> <span class="ow">or</span> <span class="n">Game</span> <span class="n">Filters</span><span class="p">,</span> <span class="n">they</span> <span class="n">need</span> <span class="n">to</span> <span class="n">persist</span><span class="o">.</span>
+
+<span class="n">Also</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t have a share button, just update the URL in the browser once the</span>
+<span class="n">Calculate</span> <span class="n">button</span> <span class="ow">or</span> <span class="n">cancel</span> <span class="n">button</span> <span class="ow">is</span> <span class="n">pressed</span><span class="o">.</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">store</span> <span class="n">the</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span>
+<span class="n">form</span> <span class="n">whether</span> <span class="n">we</span> <span class="n">press</span> <span class="n">calculate</span> <span class="ow">or</span> <span class="n">cancel</span><span class="p">,</span> <span class="n">the</span> <span class="n">form</span> <span class="n">values</span> <span class="ow">and</span> <span class="n">URL</span> <span class="n">always</span> <span class="n">persist</span><span class="o">.</span>
+<span class="n">Finally</span><span class="p">,</span> <span class="n">let</span><span class="s1">&#39;s come up with a simpler URL encoding scheme. Let&#39;</span><span class="n">s</span> <span class="n">do</span><span class="p">:</span>
+
+<span class="n">p</span><span class="o">=&lt;</span><span class="n">plot_type</span><span class="p">:</span><span class="n">values</span> <span class="mi">0</span><span class="o">-</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">time</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">percent_one</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">percent_two</span><span class="o">&gt;</span><span class="n">_</span><span class="o">...</span>
+<span class="o">&amp;</span><span class="n">s</span><span class="o">=</span><span class="p">{</span><span class="n">season_one</span><span class="p">}</span><span class="o">+</span><span class="p">{</span><span class="n">season_two</span><span class="p">}</span>
+<span class="o">&amp;</span><span class="n">g</span><span class="o">=</span><span class="p">{</span><span class="n">game_filter_one</span><span class="p">}</span><span class="o">+</span><span class="p">{</span><span class="n">game_filter_two</span><span class="p">}</span>
+
+<span class="n">where</span> <span class="n">season_one</span> <span class="ow">is</span> <span class="n">of</span> <span class="n">the</span> <span class="n">form</span> <span class="p">{</span><span class="n">year0</span><span class="p">},{</span><span class="n">year1</span><span class="p">},{</span><span class="n">B</span><span class="o">|</span><span class="n">R</span><span class="o">|</span><span class="n">P</span><span class="p">}</span> <span class="k">for</span> <span class="n">both</span> <span class="ow">or</span> <span class="n">regular</span> <span class="n">season</span>
+<span class="ow">or</span> <span class="n">playoff</span><span class="o">.</span> <span class="n">The</span> <span class="n">game</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="p">(</span><span class="n">Team</span><span class="o">|</span><span class="n">Rank</span><span class="o">|</span><span class="n">HomeStatus</span><span class="p">),(</span><span class="n">Team</span><span class="o">|</span><span class="n">Rank</span><span class="p">)</span>
+
+<span class="n">Just</span> <span class="n">g</span><span class="o">=</span><span class="p">{</span><span class="n">for_team_field</span><span class="p">}</span><span class="o">-</span><span class="p">{</span><span class="n">home_away_field</span><span class="p">}</span><span class="o">-</span><span class="p">{</span><span class="n">vs_team_field</span><span class="p">}</span><span class="o">~</span><span class="p">{</span><span class="n">for_team_field</span><span class="p">}</span><span class="o">-</span><span class="p">{</span><span class="n">home_away_field</span><span class="p">}</span><span class="o">-</span><span class="p">{</span><span class="n">vs_team_field</span><span class="p">}</span>
+<span class="n">That</span> <span class="n">example</span> <span class="n">shows</span> <span class="n">two</span> <span class="n">filters</span><span class="o">.</span> <span class="n">Also</span><span class="p">,</span> <span class="n">it</span> <span class="n">should</span> <span class="n">be</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="ow">or</span> <span class="s1">&#39;a&#39;</span> <span class="k">for</span> <span class="n">the</span> <span class="n">home</span>
+<span class="n">away</span> <span class="n">field</span><span class="o">.</span> <span class="n">So</span> <span class="k">for</span> <span class="n">example</span><span class="p">,</span> <span class="k">if</span> <span class="n">we</span> <span class="n">had</span> <span class="n">BOS</span> <span class="n">at</span> <span class="n">home</span> <span class="n">playing</span> <span class="n">ANY</span><span class="p">,</span> <span class="n">we</span> <span class="n">would</span> <span class="n">have</span>
+<span class="n">BOS</span><span class="o">-</span><span class="n">H</span><span class="o">-</span><span class="n">ANY</span><span class="o">.</span> <span class="n">That</span><span class="s1">&#39;s one game filter.</span>
+
+<span class="n">Clean</span> <span class="n">up</span> <span class="n">this</span> <span class="n">logic</span> <span class="ow">and</span> <span class="n">make</span> <span class="n">a</span> <span class="n">system</span> <span class="n">that</span> <span class="n">works</span><span class="o">.</span> <span class="n">If</span> <span class="n">our</span> <span class="n">parser</span> <span class="n">cannot</span> <span class="n">parse</span> <span class="n">the</span>
+<span class="n">URL</span><span class="p">,</span> <span class="n">we</span> <span class="n">should</span> <span class="n">use</span> <span class="n">a</span> <span class="n">blank</span> <span class="n">URL</span> <span class="k">as</span> <span class="n">though</span> <span class="n">there</span> <span class="n">was</span> <span class="n">no</span> <span class="n">URL</span><span class="o">.</span> <span class="n">Update</span> <span class="n">the</span> <span class="n">CALCULATOR</span><span class="o">.</span><span class="n">md</span> <span class="k">with</span>
+<span class="n">the</span> <span class="n">exact</span> <span class="n">logic</span> <span class="n">of</span> <span class="n">the</span> <span class="n">URL</span> <span class="n">parsing</span> <span class="n">so</span> <span class="n">we</span> <span class="n">can</span> <span class="n">correct</span> <span class="n">it</span> <span class="k">if</span> <span class="n">needed</span><span class="o">.</span>
+
+<span class="n">Also</span><span class="p">,</span> <span class="k">if</span> <span class="n">we</span> <span class="n">find</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">URL</span><span class="p">,</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">actually</span> <span class="n">update</span> <span class="n">the</span> <span class="n">chart</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Amazingly, it took my ridiculous url encoding scheme and got it very close to right the
+first time – very close to the current one which is pretty solid and minimal and works
+great.  (It also asked it to update the CLAUDE.md file with this thought out, clean
+spec, another good example of how you can have the tool write its own requirements.)</p>
+<p>However, in the course of it doing the other tasks, it totally screwed what happens
+when you enter a URL or hit the “Calculate” Button for that matter: it kept making a
+new chart and putting it under the other one.</p>
+<p>I tried, like five times, to tell it to fix it’s problems.  But it just got worse.
+Eventually, I had to copy that bad files over to _NOT_WORKING.js files, and then revert
+the changes and then asked:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">OK</span><span class="p">,</span> <span class="n">we</span> <span class="n">had</span> <span class="n">a</span> <span class="n">major</span> <span class="n">refactor</span> <span class="n">of</span> <span class="n">the</span> <span class="n">calculator</span> <span class="n">URL</span> <span class="n">building</span> <span class="ow">and</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span> <span class="n">form</span>
+<span class="n">that</span> <span class="n">did</span> <span class="ow">not</span> <span class="n">work</span><span class="o">.</span> <span class="n">We</span> <span class="n">are</span> <span class="n">going</span> <span class="n">to</span> <span class="n">carefully</span> <span class="k">try</span> <span class="ow">and</span> <span class="n">get</span> <span class="n">it</span> <span class="n">back</span> <span class="n">working</span><span class="o">.</span> <span class="n">First</span><span class="p">,</span> <span class="n">the</span>
+<span class="n">code</span> <span class="ow">is</span> <span class="n">working</span> <span class="n">OK</span> <span class="n">right</span> <span class="n">now</span><span class="p">,</span> <span class="n">just</span> <span class="n">we</span> <span class="n">want</span> <span class="n">some</span> <span class="n">of</span> <span class="n">the</span> <span class="n">behavior</span> <span class="n">of</span> <span class="n">the</span> <span class="n">old</span> <span class="n">files</span><span class="o">.</span>
+
+<span class="n">First</span><span class="p">,</span> <span class="n">there</span> <span class="n">are</span> <span class="n">three</span> <span class="n">files</span> <span class="n">that</span> <span class="n">you</span> <span class="n">created</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_init_NOT_WORKING</span><span class="o">.</span><span class="n">js</span>
+<span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_UI_NOT_WORKING</span><span class="o">.</span><span class="n">js</span> <span class="ow">and</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_NOT_WORKING</span><span class="o">.</span><span class="n">js</span><span class="o">.</span> <span class="n">This</span> <span class="n">has</span>
+<span class="n">a</span> <span class="n">new</span> <span class="n">URL</span> <span class="n">encoding</span> <span class="n">scheme</span> <span class="n">that</span> <span class="n">we</span> <span class="n">want</span> <span class="n">to</span> <span class="n">leverage</span><span class="o">.</span> <span class="n">So</span> <span class="n">our</span> <span class="n">first</span> <span class="n">task</span> <span class="ow">is</span><span class="p">,</span> <span class="n">read</span> <span class="n">the</span> <span class="o">.</span><span class="n">md</span>
+<span class="n">files</span> <span class="ow">in</span> <span class="n">this</span> <span class="n">project</span><span class="p">,</span> <span class="n">read</span> <span class="n">the</span> <span class="n">_NOT_WORKING</span><span class="o">.</span><span class="n">js</span> <span class="n">files</span><span class="p">,</span> <span class="ow">and</span> <span class="n">copy</span> <span class="n">over</span> <span class="n">the</span> <span class="n">parts</span> <span class="n">that</span>
+<span class="n">did</span> <span class="n">the</span> <span class="n">URL</span> <span class="n">encoding</span> <span class="n">scheme</span> <span class="n">to</span> <span class="n">the</span> <span class="n">regular</span> <span class="n">files</span><span class="o">.</span> <span class="n">So</span> <span class="n">copy</span> <span class="n">what</span> <span class="n">you</span> <span class="n">need</span> <span class="n">out</span> <span class="n">of</span>
+<span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_UI_NOT_WORKING</span><span class="o">.</span><span class="n">js</span> <span class="n">to</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_ui</span><span class="o">.</span><span class="n">js</span> <span class="n">etc</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>That got me back to the good URL encoding scheme.  But the state of the form was still
+not being stored correctly, and Claude had gone off and created a fairly complicated
+storage mechanism. So I guided it with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OK</span> <span class="n">that</span> <span class="n">worked</span> <span class="n">very</span> <span class="n">well</span><span class="o">.</span> <span class="n">Now</span><span class="p">,</span> <span class="n">we</span> <span class="n">have</span> <span class="n">a</span> <span class="n">URL</span> <span class="o">--</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">the</span> <span class="n">sole</span> <span class="n">state</span> <span class="n">of</span>
+<span class="n">the</span> <span class="n">system</span><span class="o">.</span> <span class="n">Get</span> <span class="n">rid</span> <span class="n">of</span> <span class="n">the</span> <span class="n">other</span> <span class="n">state</span> <span class="n">mechanisms</span> <span class="ow">and</span> <span class="n">simply</span> <span class="n">store</span>
+<span class="n">that</span> <span class="n">string</span> <span class="n">somewhere</span> <span class="n">accessible</span> <span class="n">once</span> <span class="n">formed</span><span class="o">.</span> <span class="n">Now</span><span class="p">,</span> <span class="n">when</span> <span class="n">we</span> <span class="n">load</span> <span class="n">the</span> <span class="n">form</span><span class="p">,</span>
+<span class="n">the</span> <span class="n">form</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">parse</span> <span class="n">the</span> <span class="n">URL</span> <span class="n">string</span> <span class="ow">and</span> <span class="nb">set</span> <span class="n">up</span> <span class="n">the</span> <span class="n">form</span> <span class="n">accordingly</span><span class="o">.</span>
+<span class="n">It</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">add</span> <span class="n">a</span> <span class="n">row</span> <span class="k">for</span> <span class="n">every</span> <span class="n">season</span> <span class="nb">range</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">URL</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">game</span> <span class="nb">filter</span><span class="p">,</span> <span class="nb">set</span> <span class="n">up</span>
+<span class="n">the</span> <span class="n">plot</span> <span class="n">types</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">percent</span> <span class="n">box</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span> <span class="n">If</span> <span class="n">there</span> <span class="ow">is</span>
+<span class="n">a</span> <span class="n">URL</span> <span class="n">string</span> <span class="p">(</span><span class="n">either</span> <span class="n">created</span> <span class="n">by</span> <span class="n">us</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">user</span> <span class="n">gave</span> <span class="n">us</span> <span class="n">a</span> <span class="n">URL</span> <span class="n">string</span><span class="p">)</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span>
+<span class="n">parse</span> <span class="n">it</span> <span class="ow">and</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">form</span> <span class="n">up</span> <span class="n">when</span> <span class="n">we</span> <span class="n">hit</span> <span class="s1">&#39;Calculate&#39;</span> <span class="o">--</span> <span class="n">the</span> <span class="n">sole</span>
+<span class="n">state</span> <span class="n">should</span> <span class="n">be</span> <span class="n">this</span> <span class="n">URL</span> <span class="n">string</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>And that worked perfect.  Finally, I just had to solve the problem of the chart showing
+up in the right spot (and not being duplicated) so I dug into the code and figured out
+the logic I wanted, and more specifically guided the tool:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">OK</span><span class="p">,</span> <span class="n">now</span> <span class="n">a</span> <span class="n">more</span> <span class="n">complicated</span> <span class="n">change</span><span class="o">.</span> <span class="n">Find</span> <span class="n">where</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">code</span> <span class="n">do</span> <span class="n">you</span> <span class="n">process</span> <span class="n">the</span>
+<span class="n">nbacc</span><span class="o">-</span><span class="n">chart</span> <span class="ow">and</span><span class="p">,</span> <span class="n">after</span> <span class="n">we</span><span class="s1">&#39;ve loaded the chart JSON data, pass it to the</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">js</span> <span class="n">code</span><span class="o">.</span> <span class="n">Because</span> <span class="n">we</span> <span class="n">want</span> <span class="n">to</span> <span class="n">find</span> <span class="n">the</span> <span class="n">point</span> <span class="n">where</span> <span class="n">we</span><span class="s1">&#39;ve still made the canvas,</span>
+<span class="n">just</span> <span class="n">locate</span> <span class="n">where</span> <span class="n">we</span> <span class="k">finally</span> <span class="n">call</span> <span class="n">the</span> <span class="n">chart</span><span class="o">.</span><span class="n">js</span> <span class="n">code</span> <span class="n">to</span> <span class="n">render</span> <span class="n">the</span> <span class="n">chart</span><span class="o">.</span>
+
+<span class="n">Then</span><span class="p">,</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">figure</span> <span class="n">out</span> <span class="n">where</span> <span class="n">we</span> <span class="n">are</span> <span class="n">parsing</span> <span class="n">the</span> <span class="n">URL</span><span class="o">.</span>
+
+<span class="n">Then</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">we</span> <span class="n">parse</span> <span class="n">the</span> <span class="n">URL</span> <span class="n">before</span> <span class="n">we</span> <span class="n">process</span> <span class="n">the</span> <span class="n">nbacc</span><span class="o">-</span><span class="n">chart</span> <span class="k">class</span>
+<span class="nc">div</span><span class="o">.</span>
+
+<span class="n">Then</span><span class="p">,</span> <span class="k">if</span> <span class="n">we</span> <span class="n">have</span> <span class="n">URL</span> <span class="n">data</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t load the chart JSON or pass it to the chart.js</span>
+<span class="n">plotter</span> <span class="n">code</span><span class="o">.</span> <span class="n">Just</span> <span class="n">skip</span> <span class="n">reading</span> <span class="n">that</span> <span class="n">JSON</span> <span class="n">file</span><span class="o">.</span> <span class="n">However</span><span class="p">,</span> <span class="n">we</span> <span class="n">still</span> <span class="n">want</span> <span class="n">to</span> <span class="n">make</span> <span class="n">the</span>
+<span class="n">canvas</span> <span class="n">etc</span><span class="o">.</span> <span class="n">Then</span> <span class="n">we</span> <span class="n">process</span> <span class="n">the</span> <span class="n">URL</span> <span class="n">code</span> <span class="ow">and</span> <span class="n">calculate</span> <span class="n">the</span> <span class="n">new</span> <span class="n">chart</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>After those prompts, everything was working great and we had a solid URL encoding
+scheme, the form state was getting persisted, and when you entered in a URL, it came up
+in the correct place.</p>
+</section>
+<section id="totally-starting-over-is-also-a-good-strategy">
+<span id="id6"></span><h2>Totally Starting Over Is Also A Good Strategy<a class="headerlink" href="#totally-starting-over-is-also-a-good-strategy" title="Link to this heading">#</a></h2>
+<p>Similar in spirit to the <a class="reference internal" href="#dont-throw-good-money-after-bad"><span class="std std-ref">point made above</span></a>, one
+thing I did a few times was take the CLAUDE.md file or other requirement files I was
+making and just start again.</p>
+<p>One side thing I did to help write this site was make a sphinx rst formatter in the
+style of black or prettier (very minimal and just for the things I needed, mostly line
+wrapping among other things).  My initial spec was pretty bad, but nevertheless it set
+up a python project with a <code class="docutils literal notranslate"><span class="pre">bin/</span></code>, <code class="docutils literal notranslate"><span class="pre">docs/</span></code>, and <code class="docutils literal notranslate"><span class="pre">tests/</span></code> dir and had a runnable
+prototype in no time.  Then, as time went on and I tested more and more cases against
+it, it got buggy in some way I didn’t want to debug.</p>
+<p>After trying to tell it to fix some common problems for the nth time, I gave up. Along
+the way I had it update the CLAUDE.md with the full spec, so I simply made a new
+folder, and asked it to create the same tool again after cleaning up the CLAUDE.md with
+all the rules and problems I had run into along the way.</p>
+<p>This worked like a charm and I had a much smaller, cleaner codebase and it did not cost
+much to get this new version running (which runs much better than the first iteration).</p>
+</section>
+<section id="watch-out-for-needless-error-handling">
+<span id="id7"></span><h2>Watch Out For Needless Error Handling<a class="headerlink" href="#watch-out-for-needless-error-handling" title="Link to this heading">#</a></h2>
+<p>One thing I noticed Claude do again and again was but in default values, create backup
+implementation functions if it couldn’t load certain javascript cdns, and hosts of
+other fallback / defaulting behavior.  This usually just creates bugs that are much
+harder to find or worse, weird-but-not-total-failure behavior that takes more time to
+diagnose.</p>
+<p>This is not what I wanted – this is a correct by construction architecture with little
+input from the user – I wanted it to just plain fail if data was missing in the json
+or a cdn didn’t load.</p>
+<p>In fact, if you look at the main CLAUDE.md file for the javascript, I told it many many
+times not to do this and told it to update the CLAUDE.md and it added these
+instructions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- **Error Handling**: Assume required data exists in JSON (x_min, x_max, etc.)
+- **JSON Data**: Never use fallback/default values (like `|| 0` or `|| &quot;default&quot;`)
+  for missing JSON data - assume data is &quot;correct by construction&quot;
+- **Error Checking**: Do not add unnecessary error checking or validation -
+  the JSON data is &quot;correct by construction&quot; and the UI forms will only provide valid values
+- **No Fallbacks for Missing Dependencies**: Do not implement fallback algorithms
+  when dependencies like numeric.js are missing. If a dependency is required, throw an error and fail explicitly rather than silently degrading to an alternative implementation.
+</pre></div>
+</div>
+<p>Overall, telling it how you like to code in the CLAUDE.md file is good practice, but I
+was surprised how it would keep doing it over and over.  So I kept telling not to and,
+over time, it seems to do it a lot less now.</p>
+</section>
+<section id="using-the-devil-you-know">
+<span id="id8"></span><h2>Using The Devil You Know<a class="headerlink" href="#using-the-devil-you-know" title="Link to this heading">#</a></h2>
+<p>A major idea when I started this was to:</p>
+<ul class="simple">
+<li><p>First create python files that could process all the NBA play-by-play game data, do
+all the statistical fitting, and make json chart files that could be read in by the
+chart.js codebase.</p></li>
+<li><p>Have Claude convert these files into javascript to implement the <a class="reference internal" href="../calculator/index.html"><span class="doc">interactive
+calculator</span></a>.</p></li>
+</ul>
+<p>The core idea being, I know python much much better than javascript, know the numpy/
+scipy libraries well and it will be much easier to work out all the bugs there, and
+have that all worked out rather than trying to prompt claude to do the same thing in
+javascript without a reference.  I think overall, this hunch was very correct.</p>
+<p>Mostly this worked great and took less than a day to get it all working. There were
+bumps and many missteps though.</p>
+<p>My first mistake was the majority of the python code was in one rather largish file and
+it really could have been cleaned up. So my first naive attempt at translating this
+didn’t look great, not to mention Claude didn’t even want to read in the python file as
+a whole due to size.</p>
+<p>So, instead, I broke up the file into four smaller files and had Claude cleanup the
+files, rename bad variable names, add docstrings and comments as best it could. Then I
+fed these four files into Claude and had it take a crack at it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Let</span><span class="s1">&#39;s try this python to javascript translation again.</span>
+
+<span class="n">Currently</span><span class="p">,</span> <span class="n">we</span> <span class="n">have</span> <span class="n">working</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_chart_loader</span><span class="o">.</span><span class="n">js</span> <span class="ow">and</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_plotter_</span><span class="o">*.</span><span class="n">js</span>
+<span class="n">files</span> <span class="n">that</span> <span class="n">can</span> <span class="n">load</span> <span class="n">the</span> <span class="n">JSON</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">_static</span><span class="o">/</span><span class="n">json</span><span class="o">/</span><span class="n">charts</span><span class="o">/*</span> <span class="ow">and</span> <span class="n">plot</span> <span class="n">the</span>
+<span class="n">charts</span><span class="o">.</span>
+
+<span class="n">Now</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">add</span> <span class="n">a</span> <span class="n">new</span> <span class="s1">&#39;calculator&#39;</span> <span class="n">feature</span> <span class="n">that</span> <span class="n">will</span> <span class="n">provide</span> <span class="n">a</span> <span class="n">UI</span> <span class="n">to</span> <span class="n">select</span> <span class="n">plot</span>
+<span class="n">options</span><span class="o">.</span> <span class="n">You</span> <span class="n">have</span> <span class="n">added</span> <span class="n">the</span> <span class="n">start</span> <span class="n">of</span> <span class="n">this</span> <span class="n">bootstrap</span> <span class="n">UI</span> <span class="ow">in</span> <span class="n">the</span>
+<span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_ui</span><span class="o">.</span><span class="n">js</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">good</span> <span class="n">start</span><span class="o">.</span>
+
+<span class="n">Now</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">add</span> <span class="n">the</span> <span class="n">core</span> <span class="n">logic</span> <span class="n">that</span> <span class="n">will</span> <span class="n">process</span> <span class="n">this</span> <span class="n">form</span><span class="p">,</span> <span class="n">create</span> <span class="n">the</span> <span class="n">JSON</span> <span class="n">data</span>
+<span class="ow">and</span> <span class="n">then</span> <span class="n">feed</span> <span class="n">this</span> <span class="n">JSON</span> <span class="n">data</span> <span class="n">to</span> <span class="n">the</span> <span class="n">chart</span> <span class="n">loader</span> <span class="ow">and</span> <span class="n">plotter</span> <span class="p">(</span><span class="n">instead</span> <span class="n">of</span> <span class="n">reading</span> <span class="n">the</span>
+<span class="n">JSON</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">_static</span><span class="o">/</span><span class="n">json</span><span class="o">/</span><span class="n">charts</span><span class="o">/*</span> <span class="n">directory</span><span class="p">)</span><span class="o">.</span>
+
+<span class="n">The</span> <span class="n">core</span> <span class="n">python</span> <span class="n">files</span> <span class="n">that</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">translated</span> <span class="n">are</span> <span class="n">located</span> <span class="n">at</span>
+<span class="o">../../../</span><span class="n">nba_python_data</span><span class="o">/</span><span class="n">form_plots</span><span class="o">/</span><span class="n">form_nba_chart_json_data</span><span class="o">/</span>
+
+<span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">translate</span> <span class="n">each</span> <span class="n">file</span> <span class="n">here</span> <span class="n">to</span> <span class="n">JavaScript</span> <span class="ow">and</span> <span class="n">be</span> <span class="n">named</span>
+<span class="n">form_nba_chart_json_data_api</span><span class="o">.</span><span class="n">py</span> <span class="o">-&gt;</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_api</span><span class="o">.</span><span class="n">js</span>
+<span class="n">form_nba_chart_json_data_num</span><span class="o">.</span><span class="n">py</span> <span class="o">-&gt;</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_num</span><span class="o">.</span><span class="n">js</span>
+
+<span class="n">etc</span><span class="o">.</span>
+
+<span class="n">The</span> <span class="n">form_nba_chart_json_data_num</span><span class="o">.</span><span class="n">py</span> <span class="n">uses</span> <span class="n">scipy</span> <span class="ow">and</span> <span class="n">numpy</span> <span class="ow">and</span> <span class="n">we</span> <span class="n">will</span> <span class="n">need</span> <span class="n">to</span> <span class="n">use</span>
+<span class="n">Math</span><span class="o">.</span><span class="n">js</span> <span class="ow">and</span> <span class="n">replicate</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">functionality</span> <span class="n">of</span> <span class="n">this</span> <span class="n">Python</span> <span class="n">file</span><span class="o">.</span> <span class="n">You</span> <span class="n">already</span> <span class="n">tried</span>
+<span class="n">once</span> <span class="n">at</span> <span class="o">../../../</span><span class="n">nba_python_data</span><span class="o">/</span><span class="n">old</span><span class="o">/</span><span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_core</span><span class="o">.</span><span class="n">js</span> <span class="o">--</span> <span class="n">you</span> <span class="n">can</span> <span class="n">use</span> <span class="n">this</span>
+<span class="n">file</span> <span class="k">as</span> <span class="n">a</span> <span class="n">reference</span><span class="o">.</span>
+
+<span class="n">However</span><span class="p">,</span> <span class="n">this</span> <span class="n">time</span> <span class="n">we</span> <span class="n">need</span> <span class="n">to</span> <span class="n">translate</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">logic</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">four</span> <span class="n">Python</span>
+<span class="n">files</span> <span class="ow">in</span> <span class="o">../../../</span><span class="n">nba_python_data</span><span class="o">/</span><span class="n">form_plots</span><span class="o">/</span><span class="n">form_nba_chart_json_data</span><span class="o">/</span>
+
+<span class="n">The</span> <span class="n">key</span> <span class="n">classes</span> <span class="o">/</span> <span class="n">functions</span> <span class="n">to</span> <span class="n">translate</span> <span class="n">are</span><span class="p">:</span>
+
+<span class="n">plot_biggest_down_or_more</span> <span class="n">plot_percent_chance_time_vs_points_down</span> <span class="n">GameFilter</span>
+</pre></div>
+</div>
+<p>Those results were better, but still not perfect, so I doubled down on the mission again
+with these prompts:</p>
+<p>I found the results improved dramatically when I asked for an <em>exact</em> translation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">We</span> <span class="n">want</span> <span class="n">an</span> <span class="o">*</span><span class="n">exact</span><span class="o">*</span> <span class="n">translation</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Python</span> <span class="n">files</span> <span class="ow">in</span>
+<span class="o">../../../</span><span class="n">nba_python_data</span><span class="o">/</span><span class="n">form_plots</span><span class="o">/</span><span class="n">form_nba_chart_json_data</span><span class="o">/.</span> <span class="n">Re</span><span class="o">-</span><span class="n">read</span> <span class="n">them</span> <span class="ow">and</span> <span class="n">check</span>
+<span class="n">that</span> <span class="n">your</span> <span class="n">implementation</span> <span class="n">works</span> <span class="n">exactly</span> <span class="n">like</span> <span class="n">those</span> <span class="n">files</span><span class="o">.</span> <span class="n">We</span> <span class="n">don</span><span class="s1">&#39;t need to do any</span>
+<span class="n">checking</span> <span class="k">for</span> <span class="n">defaults</span> <span class="ow">or</span> <span class="n">unnecessary</span> <span class="n">error</span> <span class="n">checking</span><span class="o">.</span> <span class="n">The</span> <span class="n">goal</span> <span class="n">here</span> <span class="ow">is</span> <span class="n">a</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">1</span>
+<span class="n">translation</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Your</span> <span class="n">starting</span> <span class="n">implementation</span> <span class="n">of</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_season_game_loader</span><span class="o">.</span><span class="n">js</span> <span class="ow">is</span> <span class="n">good</span><span class="o">.</span>
+<span class="n">However</span><span class="p">,</span> <span class="n">we</span> <span class="n">want</span> <span class="n">a</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">1</span> <span class="n">direct</span> <span class="n">translation</span> <span class="n">of</span>
+<span class="o">../../../</span><span class="n">nba_python_data</span><span class="o">/</span><span class="n">form_plots</span><span class="o">/</span><span class="n">form_nba_chart_json_data</span><span class="o">/</span><span class="n">form_nba_chart_json_data_season_game_loader</span><span class="o">.</span><span class="n">py</span><span class="o">.</span>
+<span class="n">Ensure</span> <span class="n">that</span> <span class="n">your</span> <span class="n">translation</span> <span class="ow">is</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">add</span> <span class="nb">any</span> <span class="n">additional</span> <span class="n">error</span> <span class="n">checking</span> <span class="ow">or</span>
+<span class="n">setting</span> <span class="n">defaults</span><span class="o">.</span> <span class="n">Update</span> <span class="n">the</span> <span class="n">CLAUDE</span><span class="o">.</span><span class="n">md</span> <span class="n">to</span> <span class="n">note</span> <span class="n">we</span> <span class="n">don</span><span class="s1">&#39;t want to add unnecessary error</span>
+<span class="n">checking</span> <span class="ow">and</span> <span class="n">default</span> <span class="n">settings</span><span class="o">.</span> <span class="n">The</span> <span class="n">code</span> <span class="ow">is</span> <span class="n">correct</span> <span class="n">by</span> <span class="n">construction</span> <span class="ow">and</span> <span class="n">we</span> <span class="n">will</span> <span class="n">ensure</span>
+<span class="n">the</span> <span class="n">UI</span> <span class="n">forms</span> <span class="n">will</span> <span class="n">only</span> <span class="n">provide</span> <span class="n">valid</span> <span class="n">values</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">First</span><span class="p">,</span> <span class="n">rename</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_core</span><span class="o">.</span><span class="n">js</span> <span class="n">to</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_plot_primitives</span><span class="o">.</span><span class="n">js</span>
+<span class="ow">and</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">it</span> <span class="n">matches</span> <span class="n">form_nba_chart_json_data_plot_primitives</span><span class="o">.</span><span class="n">py</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">1</span> <span class="n">without</span>
+<span class="nb">any</span> <span class="n">unnecessary</span> <span class="n">error</span> <span class="n">checking</span><span class="o">.</span> <span class="n">Then</span><span class="p">,</span> <span class="n">do</span> <span class="n">the</span> <span class="n">same</span> <span class="k">for</span> <span class="n">js</span><span class="o">/</span><span class="n">nbacc_calculator_api</span><span class="o">.</span><span class="n">js</span> <span class="ow">and</span>
+<span class="n">make</span> <span class="n">sure</span> <span class="n">it</span> <span class="n">matches</span> <span class="n">the</span> <span class="n">form_nba_chart_json_data_api</span><span class="o">.</span><span class="n">py</span> <span class="n">API</span><span class="o">.</span> <span class="n">Again</span><span class="p">,</span> <span class="n">we</span> <span class="n">are</span> <span class="n">trying</span> <span class="n">to</span>
+<span class="k">match</span> <span class="n">the</span> <span class="n">exact</span> <span class="n">logic</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Python</span> <span class="n">files</span><span class="p">,</span> <span class="n">just</span> <span class="n">making</span> <span class="n">it</span> <span class="n">work</span> <span class="ow">in</span> <span class="n">JavaScript</span> <span class="k">for</span> <span class="n">our</span>
+<span class="n">webpage</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Now we were, in hindsight, 90% of the way there and, after a few spot checks, could
+tell we were onto a solid translation.</p>
+<p>The four key Python modules that were translated into equivalent JavaScript files are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 60.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Module (in form_nba_chart_json_data_api/)</p></th>
+<th class="head"><p>JavaScript Equivalent</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/nba_comeback_calculator/form_json_chart_data/form_nba_chart_json_data_api/form_nba_chart_json_data_api.py">form_nba_chart_json_data_api.py</a></p></td>
+<td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/docs/frontend/source/_static/js/nbacc_calculator_api.js">nbacc_calculator_api.js</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/nba_comeback_calculator/form_json_chart_data/form_nba_chart_json_data_api/form_nba_chart_json_data_num.py">form_nba_chart_json_data_num.py</a></p></td>
+<td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/docs/frontend/source/_static/js/nbacc_calculator_num.js">nbacc_calculator_num.js</a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/nba_comeback_calculator/form_json_chart_data/form_nba_chart_json_data_api/form_nba_chart_json_data_plot_primitives.py">form_nba_chart_json_data_plot_primitives.py</a></p></td>
+<td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/docs/frontend/source/_static/js/nbacc_calculator_plot_primitives.js">nbacc_calculator_plot_primitives.js</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/nba_comeback_calculator/form_json_chart_data/form_nba_chart_json_data_api/form_nba_chart_json_data_season_game_loader.py">form_nba_chart_json_data_season_game_loader.py</a></p></td>
+<td><p><a class="reference external" href="https://github.com/nba-comeback-calculator/nba-comeback-calculator/tree/main/docs/frontend/source/_static/js/nbacc_calculator_season_game_loader.js">nbacc_calculator_season_game_loader.js</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This approach worked particularly well for the complex statistical analysis described
+in <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">Forming the Plot Trend Lines</span></a>, where Python’s scipy and numpy libraries needed
+JavaScript equivalents.</p>
+<p>To be clear, this still did not work out of the box, <em>many</em> bugs to squash one by one.</p>
+<p>For example it created this code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">times</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">let</span> <span class="n">t</span> <span class="o">=</span> <span class="n">start_time</span><span class="p">;</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">stop_time</span><span class="p">;</span> <span class="n">t</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">times</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>when the equivalent Python code was <cite>range(start_time, stop_time, -1)</cite>.  This is off by
+1, leading to t being 0 in the javascript case, creating a really hard to pin down bug.</p>
+<p>Also, for some reason, it made a bunch of javascript namespaces like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Use</span> <span class="n">a</span> <span class="n">module</span> <span class="n">pattern</span> <span class="n">to</span> <span class="n">avoid</span> <span class="n">polluting</span> <span class="n">the</span> <span class="k">global</span> <span class="n">namespace</span>
+<span class="o">//</span> <span class="n">But</span> <span class="n">also</span> <span class="n">make</span> <span class="n">it</span> <span class="n">available</span> <span class="n">globally</span> <span class="k">for</span> <span class="n">other</span> <span class="n">modules</span>
+<span class="n">const</span> <span class="n">nbacc_utils</span> <span class="o">=</span> <span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>But then it didn’t use the namespace in the calls in many random places, leading me to
+have to figure out one by one which namespace I needed to call (I did also have some
+success getting Claude to fix a few too, but it was a whack-a-mole experience).</p>
+<p>Finally I knew the scipy/numpy parts were going to be tricky, so I spent some time
+separating out those functions into their own python file and rewriting some algorithms
+using primitives I knew were available in Math.js.  However, the
+scipy.optimize.minimize proved a problem.  Initially, Claude created a custom <cite>fmin</cite>
+minimization algorithm, but it didn’t work at all.  After trying the numeric.js libs
+and a few others, I finally stumbled across this <a class="reference external" href="https://robertleeread.medium.com/a-brief-bad-ignorant-review-of-existing-numerical-optimization-software-in-javascript-further-c70f68641fda">rant about JavaScript numerical
+optimization</a>
+which got me onto the <a class="reference external" href="https://github.com/benfred/fmin">fmin by Ben Frederickson</a>
+library.  Once I had that in place, plots finally started popping up on the page.</p>
+</section>
+<section id="the-more-you-use-it-the-more-ways-you-see-how-you-can-use-it">
+<span id="id9"></span><h2>The More You Use It, The More Ways You See How You Can Use It<a class="headerlink" href="#the-more-you-use-it-the-more-ways-you-see-how-you-can-use-it" title="Link to this heading">#</a></h2>
+<p>Just a final note, one thing I noticed was, as I got more and more used to using Claude
+Code, I started to more easily see how I could use it in many different places.</p>
+<p>For example, I had a test.html site to test my javascript front end and there would
+setup javascript and css cdn sites.  Pretty soon I was asking Claude to strip though
+this document and auto update my sphinx conf.py file I needed to build the final site.</p>
+<p>Also, I wanted a different sphinx directive than the pylab <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">note::</span></code> was giving me,
+so I asked Claude to write a <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">blue-box::</span></code> directive and it did it first time, made
+the sphinx extension, cost me about 50 cents and I was on my way.</p>
+<p>Finally, I had it help out writing the sphinx rst pages quite a bit.  This page in
+particular I would use it to get me some starting headers and make a bunch or url links
+and other odds and ends that save a lot of time.  It’s prose style tho is still, well,
+generic and AI-y so I wrote all of the actual prose myself.</p>
+<p>And also, for little things, in Cursor I was having it write the Latex in the rst
+pages, add unicode characters and on and on.  Code completion on steriods in a sense.</p>
+</section>
+<section id="about-the-cost">
+<span id="id10"></span><h2>About the cost ….<a class="headerlink" href="#about-the-cost" title="Link to this heading">#</a></h2>
+<p>Yes, Claude code is <em>a lot</em> more expensive than, say, Cursor, I am into this well over
+$100 USD right now.  But still, cheap in the scheme when you think of what it does for
+you and how much time you saved.</p>
+</section>
+<section id="and-the-verdict-is">
+<span id="id11"></span><h2>And the Verdict Is …<a class="headerlink" href="#and-the-verdict-is" title="Link to this heading">#</a></h2>
+<p>Pretty much wow.  I mean, it’s not like you tell it “build me a website” and you’re
+done – it’s still a lot of work and takes a lot of iterations, debugging, missteps,
+and back tracking just like any coding project.</p>
+<p>But it’s way faster and most often the code is better code than I would have written
+myself.  It just takes care of all those dotting I’s and crossing T’s type stuff that
+as a project winds on you find yourself skipping.</p>
+<p>And after a while I found, say after the Calculator form was stable, I could ask for
+updates and with the context it had from the CLAUDE.md and code comments, it would get
+the new features added with very little effort.</p>
+<p>For a project not as limited as this one, I think the next major step would be to more
+fully understand the code and use Claude to clean up unnecessary bloat, etc.  To get a
+firmer understanding of what you had before you started adding major new features.</p>
+<p>Or maybe not!  Just fire and forget!</p>
+<p>But one thing stood out: I found it required much less cognitive load than having to
+type in everything yourself, check your curly braces, and a million other details,
+google for the umpteenth time about some stupid css rule you never ever wanted to know
+about, an on and on.  When Claude runs, it can take time.  But then your mind is free
+to think about the next architecture steps or what you want the next feature to do.</p>
 </section>
 </section>
 
@@ -360,6 +847,18 @@
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-claude-code-for-development">Using Claude Code for Development</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-claude-code-vs-other-tools">Choosing Claude Code vs. Other Tools</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-scope-of-work">Basic Scope Of Work</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-initial-thoughts-and-observations">Some Initial Thoughts and Observations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements-are-key-but-it-s-ok-to-be-lazy">Requirements Are Key, But It’s OK To Be Lazy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#commit-ask-for-small-features-one-at-a-time-diff-test-and-then-commit-a-few-more-times-for-good-measure">Commit, Ask for Small Features, One at a Time, Diff, Test, and Then Commit A Few More Times For Good Measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-throw-good-money-after-bad">Don’t Throw Good Money After Bad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#totally-starting-over-is-also-a-good-strategy">Totally Starting Over Is Also A Good Strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#watch-out-for-needless-error-handling">Watch Out For Needless Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-devil-you-know">Using The Devil You Know</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-more-you-use-it-the-more-ways-you-see-how-you-can-use-it">The More You Use It, The More Ways You See How You Can Use It</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-the-cost">About the cost ….</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#and-the-verdict-is">And the Verdict Is …</a></li>
 </ul>
   </nav></div>
 
