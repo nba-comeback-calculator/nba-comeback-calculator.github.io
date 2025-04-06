@@ -19,6 +19,14 @@ const nbacc_utils = (() => {
     // If true, tooltips will show on click even when not in fullscreen mode on mobile
     // If false (default), tooltips on mobile only appear in fullscreen mode
     var __HOVER_PLOTS_ON_CLICK_ON_MOBILE_NOT_FULLSCREEN__ = false;
+    
+    // Controls whether to use localStorage for caching data
+    // Set to false to disable caching (e.g., for development)
+    var __USE_LOCAL_STORAGE_CACHE__ = true;
+
+    // Maximum cache age in milliseconds (1 hour for now, will be increased to 1 day later)
+    // 1 hour = 60 * 60 * 1000 = 3,600,000 ms
+    var __MAX_CACHE_AGE_MS__ = 1 * 60 * 60 * 1000;
 
     /**
      * Reads and decompresses a gzipped JSON file from a URL or Response object
@@ -752,6 +760,196 @@ const nbacc_utils = (() => {
         );
     }
 
+    /**
+     * Store data in localStorage with timestamp
+     * @param {string} key - The storage key
+     * @param {any} data - The data to store (will be JSON stringified)
+     * @returns {boolean} - True if storage was successful
+     */
+    function setLocalStorageWithTimestamp(key, data) {
+        if (!__USE_LOCAL_STORAGE_CACHE__) return false;
+        
+        try {
+            // Store the data
+            localStorage.setItem(key, JSON.stringify(data));
+            
+            // Store timestamp metadata
+            localStorage.setItem(`${key}_timestamp`, Date.now().toString());
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Get data from localStorage with timestamp validation
+     * @param {string} key - The storage key
+     * @returns {any|null} - The stored data or null if not found or expired
+     */
+    function getLocalStorageWithTimestamp(key) {
+        if (!__USE_LOCAL_STORAGE_CACHE__) return null;
+        
+        try {
+            // Check timestamp first
+            const timestampKey = `${key}_timestamp`;
+            const timestamp = localStorage.getItem(timestampKey);
+            
+            if (timestamp) {
+                const cacheTime = parseInt(timestamp, 10);
+                const now = Date.now();
+                
+                // If cache is expired, clear it and return null
+                if (now - cacheTime > __MAX_CACHE_AGE_MS__) {
+                    localStorage.removeItem(key);
+                    localStorage.removeItem(timestampKey);
+                    return null;
+                }
+            }
+            
+            // Get and parse the data
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Initialize cache management by cleaning up expired items
+     */
+    function initCacheManagement() {
+        if (!__USE_LOCAL_STORAGE_CACHE__) return;
+        
+        try {
+            // Clean up expired cache entries
+            const now = Date.now();
+            const keysToRemove = [];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                
+                // Only process our cache keys
+                if (key && key.startsWith('nbacc_')) {
+                    try {
+                        // Try to get timestamp metadata
+                        const timestampKey = `${key}_timestamp`;
+                        const timestamp = localStorage.getItem(timestampKey);
+                        
+                        if (timestamp) {
+                            const cacheTime = parseInt(timestamp, 10);
+                            if (now - cacheTime > __MAX_CACHE_AGE_MS__) {
+                                keysToRemove.push(key);
+                                keysToRemove.push(timestampKey);
+                            }
+                        }
+                    } catch (e) {
+                        // If we can't parse the timestamp, better to remove the item
+                        keysToRemove.push(key);
+                    }
+                }
+            }
+            
+            // Remove expired items
+            keysToRemove.forEach(key => {
+                try {
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    // Ignore removal errors
+                }
+            });
+        } catch (e) {
+            // Ignore any localStorage errors
+        }
+    }
+    
+    /**
+     * Clears all NBACC-related cache entries from localStorage
+     * @returns {number} Count of cleared cache entries
+     */
+    function clearAllCache() {
+        if (!__USE_LOCAL_STORAGE_CACHE__) return 0;
+        
+        try {
+            const keysToRemove = [];
+            
+            // Find all NBACC cache keys
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('nbacc_')) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            // Remove all identified keys
+            keysToRemove.forEach(key => {
+                try {
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    // Ignore removal errors
+                }
+            });
+            
+            return keysToRemove.length;
+        } catch (e) {
+            return 0;
+        }
+    }
+    
+    // Check for cache clearing instruction in URL
+    function checkUrlForCacheClear() {
+        if (window.location.hash === '#clear') {
+            const clearedCount = clearAllCache();
+            console.log(`Cache cleared: ${clearedCount} items removed`);
+            
+            // Remove the #clear from the URL to prevent clearing on every page refresh
+            // Replace current URL without the hash
+            try {
+                const url = window.location.href.split('#')[0];
+                window.history.replaceState({}, document.title, url);
+            } catch (e) {
+                // Fallback for browsers not supporting history API
+                window.location.hash = '';
+            }
+            
+            // Show a brief message to the user
+            const messageDiv = document.createElement('div');
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '10px';
+            messageDiv.style.left = '50%';
+            messageDiv.style.transform = 'translateX(-50%)';
+            messageDiv.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            messageDiv.style.color = 'white';
+            messageDiv.style.padding = '10px 20px';
+            messageDiv.style.borderRadius = '5px';
+            messageDiv.style.zIndex = '9999';
+            messageDiv.style.fontFamily = 'Arial, sans-serif';
+            messageDiv.textContent = `Cache cleared: ${clearedCount} items removed`;
+            
+            document.body.appendChild(messageDiv);
+            
+            // Remove the message after 3 seconds
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 3000);
+            
+            return true;
+        }
+        return false;
+    }
+    
+    // Run cache initialization
+    setTimeout(() => {
+        // First check for cache clear instruction
+        const cacheCleared = checkUrlForCacheClear();
+        
+        // Then run normal cache management if cache wasn't just cleared
+        if (!cacheCleared) {
+            initCacheManagement();
+        }
+    }, 500);
+
     // Export public API
     return {
         readGzJson,
@@ -767,7 +965,14 @@ const nbacc_utils = (() => {
         renderGameExamples,
         createGameLink,
         formatGameDate,
+        setLocalStorageWithTimestamp,
+        getLocalStorageWithTimestamp,
+        initCacheManagement,
+        clearAllCache,
+        checkUrlForCacheClear,
         __LOAD_CHART_ON_PAGE_LOAD__,
-        __HOVER_PLOTS_ON_CLICK_ON_MOBILE_NOT_FULLSCREEN__
+        __HOVER_PLOTS_ON_CLICK_ON_MOBILE_NOT_FULLSCREEN__,
+        __USE_LOCAL_STORAGE_CACHE__,
+        __MAX_CACHE_AGE_MS__
     };
 })();
