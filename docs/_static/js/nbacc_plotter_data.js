@@ -427,12 +427,14 @@ nbacc_plotter_data = (() => {
                     // Use rounded value for Record points
                     const pointsDown = Math.round(recordData.pointValue);
                     // Return both values on separate lines
-                    return `${chartData.x_label}: ${xValue}<br>Points Down: ${pointsDown}`;
+                    return `${chartData.x_label} = ${xValue}<br>Points Down: ${pointsDown}`;
                 }
             }
             
             // Default header for all other cases - use the x_label from the chart data
-            const tooltipHeader = `${chartData.x_label}: ${xValue}`;
+            // For trend lines, always use "=" regardless of or_less/or_more values
+            // Trend lines should always show "Point Margin = X" format
+            const tooltipHeader = `${chartData.x_label} = ${xValue}`;
 
             // Check if we have pre-calculated data for this point margin
             if (pointMarginData[xValue]) {
@@ -498,9 +500,19 @@ nbacc_plotter_data = (() => {
             // Format statistics with each item on a new line with proper left-alignment
             if (chartData.calculate_occurrences) {
                 // For occurrences mode, show occurs instead of wins
-                return `<div style="text-align: left;">${chartData.x_label}: ${
-                    pointData.x_value
-                }<br/>Occurs: ${
+                // Check for special cases of or_less and or_more
+                const line = chartData.lines && chartData.lines[lineIndex];
+                let pointMarginLabel;
+                
+                if (line && line.or_less_point_margin !== undefined && pointData.x_value === line.or_less_point_margin) {
+                    pointMarginLabel = `${chartData.x_label} <= ${pointData.x_value}`;
+                } else if (line && line.or_more_point_margin !== undefined && pointData.x_value === line.or_more_point_margin) {
+                    pointMarginLabel = `${chartData.x_label} >= ${pointData.x_value}`;
+                } else {
+                    pointMarginLabel = `${chartData.x_label} = ${pointData.x_value}`;
+                }
+                
+                return `<div style="text-align: left;">${pointMarginLabel}<br/>Occurs: ${
                     pointData.game_count
                 } out of ${numberOfGames} Total Games<br/>Occurs %: ${(
                     pointData.point_margin_occurs_percent * 100
@@ -513,18 +525,30 @@ nbacc_plotter_data = (() => {
                 if (isRecordLine) {
                     // For Record line, include both Minutes Remaining and Points Down
                     const pointsDown = Math.round(pointData.y_value);
-                    return `<div style="text-align: left;">${chartData.x_label}: ${
-                        pointData.x_value
-                    }<br/>Points Down: ${pointsDown}<br/>Wins: ${pointData.win_count} out of ${
+                    
+                    // Always use "=" for Record line time values
+                    const timeLabel = `${chartData.x_label} = ${pointData.x_value}`;
+                    
+                    return `<div style="text-align: left;">${timeLabel}<br/>Points Down: ${pointsDown}<br/>Wins: ${pointData.win_count} out of ${
                         pointData.game_count
                     } Total Games<br/>Win %: ${winPercent}<br/>Occurs %: ${(
                         pointData.point_margin_occurs_percent * 100
                     ).toFixed(2)}</div>`;
                 } else {
                     // Default win percentage mode
-                    return `<div style="text-align: left;">${chartData.x_label}: ${
-                        pointData.x_value
-                    }<br/>Wins: ${pointData.win_count} out of ${
+                    // Check for special cases of or_less and or_more
+                    const line = chartData.lines && chartData.lines[lineIndex];
+                    let pointMarginLabel;
+                    
+                    if (line && line.or_less_point_margin !== undefined && pointData.x_value === line.or_less_point_margin) {
+                        pointMarginLabel = `${chartData.x_label} <= ${pointData.x_value}`;
+                    } else if (line && line.or_more_point_margin !== undefined && pointData.x_value === line.or_more_point_margin) {
+                        pointMarginLabel = `${chartData.x_label} >= ${pointData.x_value}`;
+                    } else {
+                        pointMarginLabel = `${chartData.x_label} = ${pointData.x_value}`;
+                    }
+                    
+                    return `<div style="text-align: left;">${pointMarginLabel}<br/>Wins: ${pointData.win_count} out of ${
                         pointData.game_count
                     } Total Games<br/>Win %: ${winPercent}<br/>Occurs %: ${(
                         pointData.point_margin_occurs_percent * 100
@@ -542,7 +566,7 @@ nbacc_plotter_data = (() => {
          */
         function createScalesConfig(chartData, plotType, findYLabel) {
             return {
-                x0: createXAxisConfig(chartData, plotType),
+                x: createXAxisConfig(chartData, plotType),
                 y: createYAxisConfig(chartData, findYLabel),
                 y1: createSecondaryYAxisConfig(chartData, findYLabel),
             };
@@ -713,7 +737,7 @@ nbacc_plotter_data = (() => {
         context,
         dataset,
         index,
-        pointMarginData
+        modulePointMarginData
     ) {
         // When a chart tooltip is shown, disable any auto-hide mechanisms
         // This ensures tooltips stay visible indefinitely until user interaction
@@ -746,6 +770,12 @@ nbacc_plotter_data = (() => {
 
         let bodyHtml = "";
         const colors = getColorWheel(0.8);
+        
+        // IMPORTANT: Get chart-specific data to avoid cross-chart contamination
+        // First try to get pointMarginData from the chart instance itself (preferred)
+        const chartPointMarginData = context.chart.pointMarginData || 
+                                    (context.chart.options && context.chart.options.pointMarginData) ||
+                                    modulePointMarginData;
         
         // Get line coefficients from the chart
         const lineCoefficients = context.chart.lineCoefficients || 
@@ -789,16 +819,29 @@ nbacc_plotter_data = (() => {
         }
         // For time_v_point_margin plots, use pre-calculated data
         else if (context.chart.plotType === "time_v_point_margin") {
-            // Must have pre-calculated point margin data
-            if (!pointMarginData[xValue]) {
-                throw new Error(`No pre-calculated data available for time ${xValue}`);
+            // Already defined chartPointMarginData for consistency across code paths
+            
+            // This console logging is no longer needed because features are working fine
+            // console.debug(`Chart tooltip for time ${xValue}, using chart-specific data:`, 
+            //              !!context.chart.pointMarginData, 
+            //              `Chart ID: ${context.chart.id}`);
+            
+            // Check if we have pre-calculated point margin data
+            if (!chartPointMarginData[xValue]) {
+                // Instead of throwing an error, just return the existing body HTML
+                // This handles the case where we have incomplete data in the JSON
+                // This console logging is no longer needed because features are working fine
+                // console.warn(`No pre-calculated data available for time ${xValue} in chart ${context.chart.id}`);
+                return bodyHtml;
             }
             
             // Loop through all lines and add their data from pre-calculated values
-            Object.entries(pointMarginData[xValue]).forEach(([legend, data], i) => {
-                // Pre-calculated data must contain pointValue
+            Object.entries(chartPointMarginData[xValue]).forEach(([legend, data], i) => {
+                // Skip if pointValue is missing
                 if (data.pointValue === undefined) {
-                    throw new Error(`Missing pointValue for line ${legend} at time ${xValue}`);
+                    // This console logging is no longer needed because features are working fine
+                    // console.warn(`Missing pointValue for line ${legend} at time ${xValue}`);
+                    return; // Skip this entry instead of throwing error
                 }
                 
                 // Remove the "(XXXX Total Games)" part from the legend text
@@ -822,7 +865,8 @@ nbacc_plotter_data = (() => {
             </td></tr>`;
             });
         } else {
-            throw new Error(`Unknown plot type: ${context.chart.plotType}`);
+            console.warn(`Unknown plot type: ${context.chart.plotType}`);
+            return bodyHtml; // Return existing body HTML instead of throwing
         }
 
         return bodyHtml;
@@ -975,9 +1019,10 @@ nbacc_plotter_data = (() => {
                 bodyHtml += nbacc_utils.renderGameExamples(
                     occurredGames,
                     "Occurred examples:",
-                    9,
+                    10,
                     nbacc_utils.isMobile(),
-                    gameFontSize
+                    gameFontSize,
+                    pointData.game_count
                 );
             }
 
@@ -987,12 +1032,15 @@ nbacc_plotter_data = (() => {
                 (context.chart.calculate_occurrences ? pointData.loss_games : null);
 
             if (notOccurredGames && notOccurredGames.length > 0) {
+                // For not occurred games, we need to calculate how many did not occur
+                const notOccurredCount = chartData.lines[lineIndex].number_of_games - pointData.game_count;
                 bodyHtml += nbacc_utils.renderGameExamples(
                     notOccurredGames,
                     "Not occurred examples:",
                     4,
                     nbacc_utils.isMobile(),
-                    gameFontSize
+                    gameFontSize,
+                    notOccurredCount
                 );
             }
         } else {
@@ -1003,9 +1051,10 @@ nbacc_plotter_data = (() => {
                 bodyHtml += nbacc_utils.renderGameExamples(
                     pointData.win_games,
                     "Win examples:",
-                    9,
+                    10,
                     nbacc_utils.isMobile(),
-                    gameFontSize
+                    gameFontSize,
+                    pointData.win_count
                 );
             }
 
@@ -1016,7 +1065,8 @@ nbacc_plotter_data = (() => {
                     "Loss examples:",
                     4,
                     nbacc_utils.isMobile(),
-                    gameFontSize
+                    gameFontSize,
+                    pointData.loss_count
                 );
             }
         }

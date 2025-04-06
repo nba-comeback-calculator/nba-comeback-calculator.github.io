@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=51479823" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=79c8d671" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=b6872104" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=b0690993" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-calculator.css?v=1694221e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basicLightbox/5.0.0/basicLightbox.min.css" />
@@ -68,20 +68,20 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-    <script src="../_static/js/nbacc_utils.js?v=e6c9ee3a"></script>
+    <script src="../_static/js/nbacc_utils.js?v=deb0acf8"></script>
     <script src="../_static/js/nbacc_saveas_image_dialog.js?v=e8366de8"></script>
-    <script src="../_static/js/nbacc_plotter_plugins.js?v=4b87e301"></script>
+    <script src="../_static/js/nbacc_plotter_plugins.js?v=dad2d8d7"></script>
     <script src="../_static/js/nbacc_calculator_num.js?v=9958ae1e"></script>
-    <script src="../_static/js/nbacc_plotter_data.js?v=b9423517"></script>
+    <script src="../_static/js/nbacc_plotter_data.js?v=94c9027f"></script>
     <script src="../_static/js/nbacc_plotter_core.js?v=649812c3"></script>
-    <script src="../_static/js/nbacc_plotter_ui.js?v=08af42ae"></script>
-    <script src="../_static/js/nbacc_chart_loader.js?v=c6958e6b"></script>
-    <script src="../_static/js/nbacc_calculator_season_game_loader.js?v=0c267cdf"></script>
-    <script src="../_static/js/nbacc_calculator_plot_primitives.js?v=eb3a0bff"></script>
-    <script src="../_static/js/nbacc_calculator_api.js?v=71cfeb41"></script>
-    <script src="../_static/js/nbacc_calculator_state.js?v=03064e29"></script>
-    <script src="../_static/js/nbacc_calculator_ui.js?v=cbf7eb52"></script>
-    <script src="../_static/js/nbacc_calculator_init.js?v=a68fa125"></script>
+    <script src="../_static/js/nbacc_plotter_ui.js?v=ca4889ca"></script>
+    <script src="../_static/js/nbacc_chart_loader.js?v=8a01cad3"></script>
+    <script src="../_static/js/nbacc_calculator_season_game_loader.js?v=9daf0bc4"></script>
+    <script src="../_static/js/nbacc_calculator_plot_primitives.js?v=b9f7f873"></script>
+    <script src="../_static/js/nbacc_calculator_api.js?v=52cf373e"></script>
+    <script src="../_static/js/nbacc_calculator_state.js?v=ffb0ae20"></script>
+    <script src="../_static/js/nbacc_calculator_ui.js?v=cf658cfb"></script>
+    <script src="../_static/js/nbacc_calculator_init.js?v=56df7fd8"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="A Rule Of Thumb That Actually Works If Your Thumb Is Good At Math" href="rule_of_thumb_that_actually_works.html" />
@@ -336,10 +336,11 @@
 <section id="are-big-leads-no-longer-safe">
 <span id="id1"></span><h2>Are Big Leads No Longer Safe?<a class="headerlink" href="#are-big-leads-no-longer-safe" title="Link to this heading">#</a></h2>
 <p>There’s a sense that, in recent times, teams are busting out of big holes more often
-than ever. Just as <a class="reference external" href="https://www.espn.com/nba/story/_/id/26725776/this-season-massive-comeback-nba">Kevin Pelton and Baxter Holmes noted in 2019</a>, in
-<a class="reference external" href="https://www.espn.com/nba/story/_/id/39698420/no-lead-safe-nba-big-comebacks-blown-leads">‘20 is the old 12’: Why no lead is safe in the NBA anymore</a>
-ESPN reporter Andrew Lopez explains that 2023-24 has already seen the most 20-point
-victories in a single season since 1996-97 and continues with analysis by Steve Kerr:</p>
+than ever. Just as <a class="reference external" href="https://www.espn.com/nba/story/_/id/26725776/this-season-massive-comeback-nba">Kevin Pelton and Baxter Holmes noted in 2019</a>, so
+did ESPN reporter Andrew Lopez in <a class="reference external" href="https://www.espn.com/nba/story/_/id/39698420/no-lead-safe-nba-big-comebacks-blown-leads">‘20 is the old 12’: Why no lead is safe in the NBA
+anymore</a>.
+There he points out that 2023-24 has already seen the most 20-point victories in a
+single season since 1996-97 and continues with analysis by Steve Kerr:</p>
 <blockquote class="pull-quote">
 <div><p>“Way more early possession 3s now. It just feels like you are up 12 and the other
 team gets two quick stops on you and they race down, they throw it ahead and they
@@ -347,11 +348,13 @@ hit two 3s. It’s a six-point game now. So 20 is the old 12; 12 is the old seve
 mean, there’s definitely an awareness from everybody that leads are not safe.”</p>
 </div></blockquote>
 <p>But is this true? In short … not really.</p>
-<p><a class="reference internal" href="#deciding-on-eras-breakdown"><span class="std std-ref">To frame this, I decided to break up the available play-by-play data</span></a> into:</p>
+<p>To frame this, I decided to break up the available play-by-play data into:</p>
 <ul class="simple">
 <li><p>1996-97 to 2016-17 (old-school) versus</p></li>
 <li><p>2017-18 to 2024-25 (modern)</p></li>
 </ul>
+<p>(<a class="reference internal" href="#deciding-on-eras-breakdown"><span class="std std-ref">As explained below</span></a>, a more targeted recent modern
+era does not change the analysis so the larger dataset was chosen).</p>
 <p>So while there’s about 1.8x times as many 20 points-or-more comebacks comparing the
 eras, the <em>chance</em> of coming back from 20 points-or-more down (<code class="docutils literal notranslate"><span class="pre">5.31%</span></code>) is about the
 same as coming back from 18 points-or-more down (<code class="docutils literal notranslate"><span class="pre">4.88%</span></code>) back in the day.</p>
@@ -363,7 +366,9 @@ bucket.</p>
 <p><a class="reference internal" href="understanding_and_using_the_plots.html#max-points-down-or-more"><span class="std std-ref">A very common way of looking at comebacks</span></a> is
 calculating the % chance of coming back from down N points <em>or more</em> over an entire
 game:</p>
-<div id="plots/old_school_v_modern/max_down_or_more_48" class="nbacc-chart"></div><p>Adding <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">trend lines to the statistical data</span></a> and plotting it on a <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_probability_plot">normal probability plot</a>, we can see a fairly constant
+<div id="plots/old_school_v_modern/max_down_or_more_48" class="nbacc-chart"></div><p>A major point is that the almost always the data is normal (Gaussian) so adding
+<a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">trend lines to the statistical data</span></a> and
+plotting it on a <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_probability_plot">normal probability plot</a>, we can see a fairly constant
 shift of about 2 points to the left for the modern era.</p>
 <p>You can <a class="reference internal" href="understanding_and_using_the_plots.html#using-the-plot-controls"><span class="std std-ref">interact with this chart</span></a> and hover over the
 raw data points to see which games compose a point (and compare it with a <a class="reference external" href="https://en.wikipedia.org/wiki/Comeback_(sports)#NBA">list of
@@ -456,8 +461,8 @@ lead to the conclusion that big comebacks should be more probable: I mean, if yo
 down and can score quick, so can your opponent and keep you down.</p>
 <p>So a related question is: are there simply more games with large deficits? Plotting the
 occurrence rate between the eras we see:</p>
-<div id="plots/old_school_v_modern/occurs_down_or_more_48" class="nbacc-chart"></div><p>Now, teams fall down 30 points or more <code class="docutils literal notranslate"><span class="pre">12.09%</span></code> of the time compared to
-<code class="docutils literal notranslate"><span class="pre">7.61%</span></code> in the past, a notable 1.59x increase (or about 59% more frequently).</p>
+<div id="plots/old_school_v_modern/occurs_down_or_more_48" class="nbacc-chart"></div><p>Now, teams fall down 30 points or more <code class="docutils literal notranslate"><span class="pre">12.09%</span></code> of the time compared to <code class="docutils literal notranslate"><span class="pre">7.61%</span></code> in
+the past, a notable 1.59x increase (or about 59% more frequently).</p>
 </section>
 <section id="what-would-be-dramatic">
 <span id="id5"></span><h2>What <em>Would</em> Be Dramatic<a class="headerlink" href="#what-would-be-dramatic" title="Link to this heading">#</a></h2>
@@ -479,7 +484,8 @@ very little difference.</p></li>
 </ul>
 <p>So – always wanting as many games as possible to reduce the statistical noise – I
 felt that was the fairest breakdown: <a class="reference internal" href="../plots/old_school_v_modern.html"><span class="doc">1996-2016 v
-2017-2024</span></a>.</p>
+2017-2024</span></a>.  I also tried to create the most dramatic shift
+possible between something considered modern versus historical.</p>
 </section>
 </section>
 

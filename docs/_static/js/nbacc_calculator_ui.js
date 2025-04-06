@@ -5,13 +5,7 @@
 
 const nbacc_calculator_ui = (() => {
     // Check for required dependencies
-    if (typeof nbacc_calculator_api === "undefined") {
-        console.error("nbacc_calculator_api module is not loaded");
-    }
-    
-    if (typeof nbacc_calculator_state === "undefined") {
-        console.error("nbacc_calculator_state module is not loaded");
-    }
+    // Removed dependency checking console logs
     
     // State management
     let state = {
@@ -34,6 +28,8 @@ const nbacc_calculator_ui = (() => {
     // Initialize UI components
     function initUI() {
         // Add keyboard listener for calculator toggle
+        // COMMENTED OUT - Removed keyboard event listeners as requested
+        /*
         document.addEventListener("keydown", (e) => {
             if (e.key === "c") {
                 if (isCalculatorOpen) {
@@ -65,23 +61,22 @@ const nbacc_calculator_ui = (() => {
                 }
             }
         });
+        */
 
         // Initialize calculator container
         const calculatorDiv = document.getElementById("nbacc_calculator");
         if (calculatorDiv) {
             calculatorDiv.innerHTML = `
                 <div id="nbacc_chart_container" class="chart-container">
-                    <p class="calculator-placeholder">Press 'c' to open Calculator</p>
+                    <p class="calculator-placeholder">Click "Configure" button to open Calculator</p>
                 </div>
             `;
         }
         
         // Check for URL parameters - URL is the single source of truth
         if (typeof nbacc_calculator_state !== 'undefined' && nbacc_calculator_state.hasStateInUrl()) {
-            console.log('URL parameters detected, initializing calculator with URL state');
             const urlState = nbacc_calculator_state.getStateFromUrl();
             if (urlState) {
-                console.log('URL state found, applying and rendering');
                 // Update the state with URL parameters
                 applyState(urlState);
                 
@@ -117,8 +112,6 @@ const nbacc_calculator_ui = (() => {
     function applyState(loadedState) {
         if (!loadedState) return state;
         
-        console.log("Applying state:", loadedState);
-        
         // Copy simple properties
         state.plotType = loadedState.plotType || state.plotType;
         state.startTime = loadedState.startTime || state.startTime;
@@ -134,7 +127,6 @@ const nbacc_calculator_ui = (() => {
         
         // Copy year groups (these are simple objects)
         if (loadedState.yearGroups && loadedState.yearGroups.length > 0) {
-            console.log(`Applying ${loadedState.yearGroups.length} year groups from loaded state`);
             state.yearGroups = loadedState.yearGroups;
         } else {
             // Ensure we have at least one year group
@@ -149,8 +141,6 @@ const nbacc_calculator_ui = (() => {
         
         // Handle game filters - need to create proper GameFilter instances
         if (loadedState.gameFilters && loadedState.gameFilters.length > 0 && typeof nbacc_calculator_api !== 'undefined') {
-            console.log(`Applying ${loadedState.gameFilters.length} game filters from loaded state`);
-            
             state.gameFilters = loadedState.gameFilters.map(filterParams => {
                 // Handle null or empty filter - always create a GameFilter instance
                 if (!filterParams || Object.keys(filterParams).length === 0) {
@@ -158,7 +148,6 @@ const nbacc_calculator_ui = (() => {
                     try {
                         return new nbacc_calculator_api.GameFilter({});
                     } catch (error) {
-                        console.error("Error creating empty GameFilter:", error);
                         return null; // Return null if we can't create a GameFilter
                     }
                 }
@@ -167,7 +156,6 @@ const nbacc_calculator_ui = (() => {
                 try {
                     return new nbacc_calculator_api.GameFilter(filterParams);
                 } catch (error) {
-                    console.error("Error creating GameFilter:", error);
                     // Try to create an empty filter as fallback
                     try {
                         return new nbacc_calculator_api.GameFilter({});
@@ -176,14 +164,11 @@ const nbacc_calculator_ui = (() => {
                     }
                 }
             }).filter(filter => filter !== null); // Remove any null filters
-            
-            console.log("Applied game filters:", state.gameFilters);
         } else {
             // No game filters in loaded state, set to empty array (not [null])
             state.gameFilters = [];
         }
         
-        console.log("State applied successfully");
         return state;
     }
     
@@ -197,7 +182,10 @@ const nbacc_calculator_ui = (() => {
     }
 
     // Show calculator UI in a lightbox
-    function showCalculatorUI(targetChartId = null) {
+    function showCalculatorUI(targetChartId = null, event = null) {
+        // Clear any visible tooltips
+        nbacc_utils.chartJsToolTipClearer(event);
+        
         // Set the flag that calculator is open
         isCalculatorOpen = true;
         
@@ -339,7 +327,7 @@ const nbacc_calculator_ui = (() => {
                         } else if (!document.getElementById("nbacc_calculator_chart")) {
                             // No chart at all, show placeholder
                             chartContainer.innerHTML =
-                                "<p class=\"calculator-placeholder\">Press 'c' to open Calculator</p>";
+                                "<p class=\"calculator-placeholder\">Click \"Configure\" button to open Calculator</p>";
                         }
                     }
                 }
@@ -455,7 +443,8 @@ const nbacc_calculator_ui = (() => {
         // Clear previous year groups and load from state
         document.getElementById("year-groups-list").innerHTML = "";
         if (state.yearGroups && state.yearGroups.length > 0) {
-            console.log(`Setting up ${state.yearGroups.length} year groups from state`);
+            // This console logging is no longer needed because features are working fine
+            // console.log(`Setting up ${state.yearGroups.length} year groups from state`);
             
             // Load year groups from state
             state.yearGroups.forEach(() => {
@@ -497,7 +486,8 @@ const nbacc_calculator_ui = (() => {
         // Clear previous game filters and load from state
         document.getElementById("game-filters-list").innerHTML = "";
         if (state.gameFilters && state.gameFilters.length > 0) {
-            console.log(`Setting up ${state.gameFilters.length} game filters from state`);
+            // This console logging is no longer needed because features are working fine
+            // console.log(`Setting up ${state.gameFilters.length} game filters from state`);
             
             // Load game filters from state - create one UI element for each filter in the state
             state.gameFilters.forEach(() => {
@@ -633,7 +623,12 @@ const nbacc_calculator_ui = (() => {
 
         // Time select handler (timeSelect is already defined above)
         timeSelect.addEventListener("change", function () {
-            state.startTime = parseInt(this.value, 10) || 0;
+            // Get the raw selected value
+            const selectedValue = this.value;
+            
+            // For seconds values, parse to proper number
+            // We need to convert these to numbers
+            state.startTime = parseFloat(selectedValue);
             
             // For Points Down At Time, use the selected time as the specificTime
             if (state.plotType === "Points Down At Time") {
@@ -719,6 +714,10 @@ const nbacc_calculator_ui = (() => {
         const calculateBtn = document.getElementById("calculate-btn");
         calculateBtn.addEventListener("click", function () {
             try {
+                // Clear any visible tooltips - use the same tooltip clearer used by Full Screen and Reset Zoom buttons
+                // This ensures hover boxes are closed when hitting Calculate button
+                nbacc_utils.chartJsToolTipClearer(event);
+                
                 // Make sure year groups and game filters are up to date before rendering
                 updateYearGroupsState();
                 updateGameFiltersState();
@@ -726,7 +725,8 @@ const nbacc_calculator_ui = (() => {
                 // Update URL only - this is now our single source of truth for state
                 if (typeof nbacc_calculator_state !== 'undefined') {
                     const urlParams = nbacc_calculator_state.updateBrowserUrl(state);
-                    console.log("Updated URL with state:", urlParams);
+                    // This console logging is no longer needed because features are working fine
+                    // console.log("Updated URL with state:", urlParams);
                 }
                 
                 if (state.targetChartId) {
@@ -739,7 +739,8 @@ const nbacc_calculator_ui = (() => {
                 lightboxInstance.close();
                 isCalculatorOpen = false;
             } catch (error) {
-                console.error("Error during calculation:", error);
+                // This console logging is no longer needed because features are working fine
+                // console.error("Error during calculation:", error);
             }
         });
         
@@ -981,18 +982,46 @@ const nbacc_calculator_ui = (() => {
         // For Max Points Down Or More or Max Points Down, include 48 minutes option
         const includeFullGame = basePlotType === "Max Points Down Or More" || basePlotType === "Max Points Down";
         
+        // For Percent Chance: Time Vs. Points Down, minimum time is 6 minutes
+        const isPercentPlot = basePlotType === "Percent Chance: Time Vs. Points Down";
+        
         // Start with the appropriate time values based on plot type
-        const timeValues = includeFullGame ? 
-            [48, 36, 24, 18, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1] : 
-            [36, 24, 18, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+        let timeValues;
+        if (includeFullGame) {
+            timeValues = [48, 36, 24, 18, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+        } else if (isPercentPlot) {
+            // For Percent Chance plots, range is 6-24 minutes only
+            timeValues = [24, 18, 12, 11, 10, 9, 8, 7, 6];
+        } else {
+            timeValues = [36, 24, 18, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+        }
+        
+        // Add seconds values only for non-percent plots
+        const secondsValues = isPercentPlot ? [] : [
+            { value: "0.75", label: "45 seconds" },
+            { value: "0.5", label: "30 seconds" },
+            { value: "0.25", label: "15 seconds" },
+            { value: (1/6).toString(), label: "10 seconds" },
+            { value: (1/12).toString(), label: "5 seconds" }
+        ];
         
         let options = "";
 
+        // Add minute options
         for (const time of timeValues) {
             const selected = time === selectedTime ? "selected" : "";
             options += `<option value="${time}" ${selected}>${time} minute${
                 time !== 1 ? "s" : ""
             }</option>`;
+        }
+        
+        // Add seconds options (only for non-percent plots)
+        for (const seconds of secondsValues) {
+            // Convert both values to numbers for comparison since selectedTime might be a number
+            // and seconds.value is now a string
+            const numericValue = parseFloat(seconds.value);
+            const selected = Math.abs(numericValue - selectedTime) < 0.001 ? "selected" : "";
+            options += `<option value="${seconds.value}" ${selected}>${seconds.label}</option>`;
         }
 
         return options;
@@ -1111,7 +1140,6 @@ const nbacc_calculator_ui = (() => {
         
         // If no filter elements, return with empty array
         if (filters.length === 0) {
-            console.log("No game filter elements found, using empty array");
             return;
         }
         filters.forEach((filter) => {
@@ -1186,13 +1214,11 @@ const nbacc_calculator_ui = (() => {
                 const gameFilter = new nbacc_calculator_api.GameFilter(filterParams);
                 state.gameFilters.push(gameFilter);
             } catch (error) {
-                console.error("Error creating GameFilter from UI:", error);
                 // Try to create an empty filter as fallback
                 try {
                     const emptyFilter = new nbacc_calculator_api.GameFilter({});
                     state.gameFilters.push(emptyFilter);
                 } catch (err) {
-                    console.error("Failed to create fallback empty filter:", err);
                     // Don't add anything if we can't create a valid filter
                 }
             }
@@ -1280,7 +1306,7 @@ const nbacc_calculator_ui = (() => {
                 0
             );
 
-            console.log(`Total games loaded across all seasons: ${totalGames}`);
+            // Total games loaded across all seasons
 
             if (totalGames === 0) {
                 // Instead of throwing, show error message in the chart container
@@ -1303,7 +1329,7 @@ const nbacc_calculator_ui = (() => {
                 if (resetBtn) {
                     resetBtn.addEventListener("click", function () {
                         chartContainer.innerHTML =
-                            "<p class=\"calculator-placeholder\">Press 'c' to open Calculator</p>";
+                            "<p class=\"calculator-placeholder\">Click \"Configure\" button to open Calculator</p>";
                     });
                 }
 
@@ -1313,8 +1339,40 @@ const nbacc_calculator_ui = (() => {
             // Calculate chart data based on plot type
             let chartData;
 
-            // Remove debugger statement
-            console.log("Ready to calculate chart data...");
+            // Ready to calculate chart data
+            
+            /**
+             * Convert a time value from the select option to the proper API format.
+             * Handles both numerical values (1, 2, etc.) and sub-minute values
+             * (0.75 for 45s, 0.5 for 30s, etc.)
+             */
+            const formatTimeForApi = (time) => {
+                // Ensure we're working with a number for proper comparison
+                const numericTime = parseFloat(time);
+                
+                // Check for sub-minute values with small tolerance for floating point errors
+                if (Math.abs(numericTime - 0.75) < 0.001) {
+                    return "45s";
+                }
+                if (Math.abs(numericTime - 0.5) < 0.001) {
+                    return "30s";
+                }
+                if (Math.abs(numericTime - 0.25) < 0.001) {
+                    return "15s";
+                }
+                if (Math.abs(numericTime - 1/6) < 0.001) {
+                    return "10s";
+                }
+                if (Math.abs(numericTime - 1/12) < 0.001) {
+                    return "5s";
+                }
+                
+                // For regular minutes, return as-is
+                return numericTime;
+            };
+            
+            // Format time for API call
+            const apiStartTime = formatTimeForApi(state.startTime);
 
             if (state.plotType === "Percent Chance: Time Vs. Points Down") {
                 // Format percents with % sign 
@@ -1329,10 +1387,9 @@ const nbacc_calculator_ui = (() => {
                 // Use plot_percent_versus_time function for this plot type
                 chartData = nbacc_calculator_api.plot_percent_versus_time(
                     state.yearGroups,
-                    state.startTime,
-                    state.endTime || 0,
-                    formattedPercents, // Use selected percents
-                    gameFilters, // Use null if no filters
+                    apiStartTime, // Use formatted time value
+                    formattedPercents, // Use selected percents - this is the 3rd parameter
+                    gameFilters, // Use null if no filters - this is the 4th parameter
                     state.plotGuides, // plot_2x_guide
                     state.plotGuides, // plot_4x_guide
                     state.plotGuides, // plot_6x_guide
@@ -1347,12 +1404,12 @@ const nbacc_calculator_ui = (() => {
                 const cumulate = state.plotType === "Max Points Down Or More" || 
                                 state.plotType === "Occurrence Max Points Down Or More";
 
-                // If 'Points Down At Time', pass null for stop_time
-                const stopTime =
+                // Determine the down_mode based on plot type
+                const downMode =
                     state.plotType === "Points Down At Time" || 
                     state.plotType === "Occurrence Points Down At Time"
-                        ? null
-                        : state.endTime || 0;
+                        ? "at"
+                        : "max";
 
                 // Determine if we should calculate occurrences based on plot type
                 const calculateOccurrences = state.plotType.startsWith("Occurrence");
@@ -1363,8 +1420,8 @@ const nbacc_calculator_ui = (() => {
                 
                 chartData = nbacc_calculator_api.plot_biggest_deficit(
                     state.yearGroups,
-                    state.startTime,
-                    stopTime,
+                    apiStartTime, // Use formatted time value
+                    downMode,
                     cumulate,
                     null, // min_point_margin
                     null, // max_point_margin
@@ -1412,12 +1469,7 @@ const nbacc_calculator_ui = (() => {
             }
 
             try {
-                // Debug the modules
-                console.log("Module check at render time:");
-                console.log("nbacc_utils available:", typeof nbacc_utils);
-                console.log("nbacc_plotter_data available:", typeof nbacc_plotter_data);
-                console.log("nbacc_plotter_core available:", typeof nbacc_plotter_core);
-                console.log("nbacc_plotter_ui available:", typeof nbacc_plotter_ui);
+                // Check modules availability
 
                 // Use the global references (which are set in their respective files)
                 if (!nbacc_plotter_data) {
@@ -1440,15 +1492,42 @@ const nbacc_calculator_ui = (() => {
                     chartConfig
                 );
                 
-                // Manually check and add chart controls if they weren't added by the core plotter
-                setTimeout(() => {
-                    const buttonContainer = document.querySelector("#nbacc_calculator_chart").parentElement.querySelector(".chart-buttons");
-                    if (!buttonContainer && typeof nbacc_plotter_ui !== 'undefined' && nbacc_plotter_ui.addControlsToChartArea) {
-                        console.log("Adding chart controls manually");
-                        const canvas = document.getElementById("nbacc_calculator_chart");
-                        nbacc_plotter_ui.addControlsToChartArea(canvas, chart);
+                // Add controls immediately without waiting
+                const canvas = document.getElementById("nbacc_calculator_chart");
+                if (canvas && typeof nbacc_plotter_ui !== 'undefined' && nbacc_plotter_ui.addControlsToChartArea) {
+                    nbacc_plotter_ui.addControlsToChartArea(canvas, chart);
+                    
+                    // Force immediate visibility of buttons
+                    const buttonContainer = canvas.parentElement?.querySelector(".chart-buttons");
+                    if (buttonContainer) {
+                        buttonContainer.style.opacity = "1";
+                        buttonContainer.style.transition = "none";  // Remove transition for immediate visibility
+                        
+                        // Manually position buttons without waiting
+                        if (typeof window.updateButtonPositions === 'function') {
+                            window.updateButtonPositions(chart);
+                        }
                     }
-                }, 100);
+                }
+                
+                // Additional attempts to ensure buttons are visible
+                const forceButtonVisibility = () => {
+                    const buttonContainer = document.querySelector("#nbacc_calculator_chart")?.parentElement?.querySelector(".chart-buttons");
+                    if (buttonContainer) {
+                        buttonContainer.style.opacity = "1";
+                        buttonContainer.style.visibility = "visible";
+                        buttonContainer.style.display = "flex";
+                        
+                        if (typeof window.updateButtonPositions === 'function') {
+                            window.updateButtonPositions(chart);
+                        }
+                    }
+                };
+                
+                // Try multiple times with decreasing intervals for better responsiveness
+                setTimeout(forceButtonVisibility, 50);
+                setTimeout(forceButtonVisibility, 100);
+                setTimeout(forceButtonVisibility, 250);
             } catch (error) {
                 console.error("Error rendering chart:", error);
                 throw new Error("Failed to render chart: " + error.message);
@@ -1605,6 +1684,39 @@ const nbacc_calculator_ui = (() => {
             // Calculate chart data based on plot type - same logic as calculateAndRenderChart
             let chartData;
             
+            /**
+             * Convert a time value from the select option to the proper API format.
+             * Handles both numerical values (1, 2, etc.) and sub-minute values
+             * (0.75 for 45s, 0.5 for 30s, etc.)
+             */
+            const formatTimeForApi = (time) => {
+                // Ensure we're working with a number for proper comparison
+                const numericTime = parseFloat(time);
+                
+                // Check for sub-minute values with small tolerance for floating point errors
+                if (Math.abs(numericTime - 0.75) < 0.001) {
+                    return "45s";
+                }
+                if (Math.abs(numericTime - 0.5) < 0.001) {
+                    return "30s";
+                }
+                if (Math.abs(numericTime - 0.25) < 0.001) {
+                    return "15s";
+                }
+                if (Math.abs(numericTime - 1/6) < 0.001) {
+                    return "10s";
+                }
+                if (Math.abs(numericTime - 1/12) < 0.001) {
+                    return "5s";
+                }
+                
+                // For regular minutes, return as-is
+                return numericTime;
+            };
+            
+            // Format time for API call
+            const apiStartTime = formatTimeForApi(state.startTime);
+            
             if (state.plotType === "Percent Chance: Time Vs. Points Down") {
                 // Format percents with % sign 
                 const formattedPercents = state.selectedPercents.map(p => 
@@ -1617,10 +1729,9 @@ const nbacc_calculator_ui = (() => {
                 
                 chartData = nbacc_calculator_api.plot_percent_versus_time(
                     state.yearGroups,
-                    state.startTime,
-                    state.endTime || 0,
-                    formattedPercents, // Use selected percents
-                    gameFilters, // Use null if no filters
+                    apiStartTime, // Use formatted time value
+                    formattedPercents, // Use selected percents - this is the 3rd parameter
+                    gameFilters, // Use null if no filters - this is the 4th parameter
                     state.plotGuides, // plot_2x_guide
                     state.plotGuides, // plot_4x_guide
                     state.plotGuides, // plot_6x_guide
@@ -1634,12 +1745,12 @@ const nbacc_calculator_ui = (() => {
                 const cumulate = state.plotType === "Max Points Down Or More" || 
                                state.plotType === "Occurrence Max Points Down Or More";
                 
-                // If 'Points Down At Time', pass null for stop_time
-                const stopTime =
+                // Determine the down_mode based on plot type
+                const downMode =
                     state.plotType === "Points Down At Time" || 
                     state.plotType === "Occurrence Points Down At Time"
-                        ? null
-                        : state.endTime || 0;
+                        ? "at"
+                        : "max";
                 
                 // Determine if we should calculate occurrences based on plot type
                 const calculateOccurrences = state.plotType.startsWith("Occurrence");
@@ -1650,8 +1761,8 @@ const nbacc_calculator_ui = (() => {
                 
                 chartData = nbacc_calculator_api.plot_biggest_deficit(
                     state.yearGroups,
-                    state.startTime,
-                    stopTime,
+                    apiStartTime, // Use formatted time value
+                    downMode,
                     cumulate,
                     null, // min_point_margin
                     state.maxPointMargin, // max_point_margin
@@ -1696,12 +1807,47 @@ const nbacc_calculator_ui = (() => {
                 window.chartInstances[targetChartId] = chart;
             }
             
-            // Make sure control buttons are visible
-            setTimeout(() => {
-                if (typeof nbacc_plotter_ui !== 'undefined' && nbacc_plotter_ui.addControlsToChartArea) {
-                    nbacc_plotter_ui.addControlsToChartArea(canvas, chart);
+            // Add controls immediately without waiting
+            if (typeof nbacc_plotter_ui !== 'undefined' && 
+                nbacc_plotter_ui.addControlsToChartArea && 
+                canvas && 
+                chart) {
+                // Add chart controls immediately
+                nbacc_plotter_ui.addControlsToChartArea(canvas, chart);
+                
+                // Force immediate visibility
+                const buttonContainer = canvas.parentElement?.querySelector(".chart-buttons");
+                if (buttonContainer) {
+                    buttonContainer.style.opacity = "1";
+                    buttonContainer.style.transition = "none";  // Remove transition for immediate visibility
+                    buttonContainer.style.visibility = "visible";
+                    buttonContainer.style.display = "flex";
+                    
+                    // Manually position buttons without waiting
+                    if (typeof window.updateButtonPositions === 'function') {
+                        window.updateButtonPositions(chart);
+                    }
                 }
-            }, 100);
+            }
+            
+            // Additional attempts to ensure buttons are visible
+            const forceButtonVisibility = () => {
+                const buttonContainer = canvas.parentElement?.querySelector(".chart-buttons");
+                if (buttonContainer) {
+                    buttonContainer.style.opacity = "1";
+                    buttonContainer.style.visibility = "visible";
+                    buttonContainer.style.display = "flex";
+                    
+                    if (typeof window.updateButtonPositions === 'function') {
+                        window.updateButtonPositions(chart);
+                    }
+                }
+            };
+            
+            // Try multiple times with decreasing intervals for better responsiveness
+            setTimeout(forceButtonVisibility, 50);
+            setTimeout(forceButtonVisibility, 100);
+            setTimeout(forceButtonVisibility, 250);
             
             // Re-mark the chart as a calculator chart so it keeps its configurable status
             // Access the loadedCharts variable defined in nbacc_chart_loader.js

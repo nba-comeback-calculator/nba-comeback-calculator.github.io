@@ -170,7 +170,7 @@ const nbacc_calculator_plot_primitives = (() => {
             games,
             game_filter,
             start_time,
-            stop_time = null,
+            down_mode = "at",
             legend = null,
             cumulate = false,
             min_point_margin = null,
@@ -184,14 +184,15 @@ const nbacc_calculator_plot_primitives = (() => {
             this.plot_type = "percent_v_margin";
             this.games = games;
             this.legend = legend;
+            this.cumulate = cumulate; // Store cumulate as an instance variable
 
             this.start_time = start_time;
-            this.stop_time = stop_time;
+            this.down_mode = down_mode;
             this.point_margin_map = this.setup_point_margin_map(
                 games,
                 game_filter,
                 start_time,
-                stop_time
+                down_mode
             );
             this.all_game_ids = this.get_all_game_ids();
             this.number_of_games = this.all_game_ids.size;
@@ -203,7 +204,13 @@ const nbacc_calculator_plot_primitives = (() => {
                 this.cumulate_point_totals(this.point_margin_map);
             }
 
-            this.clean_point_margin_map_end_points(this.point_margin_map);
+            // Store or_less_point_margin and or_more_point_margin from clean_point_margin_map_end_points
+            const [or_less_point_margin, or_more_point_margin] =
+                this.clean_point_margin_map_end_points(this.point_margin_map);
+
+            // Store these values like the Python implementation
+            this.or_less_point_margin = or_less_point_margin;
+            this.or_more_point_margin = or_more_point_margin;
 
             this.point_margins = Object.keys(this.point_margin_map)
                 .map(Number)
@@ -258,29 +265,62 @@ const nbacc_calculator_plot_primitives = (() => {
             return all_game_ids;
         }
 
-        setup_point_margin_map(games, game_filter, start_time, stop_time) {
+        setup_point_margin_map(games, game_filter, start_time, down_mode) {
             const point_margin_map = {};
 
             for (const game of games) {
                 let win_point_margin, lose_point_margin;
 
-                if (stop_time === null) {
+                if (down_mode === "at") {
                     // Points down at a specific time
                     const sign = game.score_diff > 0 ? 1 : -1;
+
+                    // Get the index for this time point directly from the TIME_TO_INDEX_MAP
+                    const index =
+                        nbacc_calculator_season_game_loader.TIME_TO_INDEX_MAP[
+                            start_time
+                        ];
+
+                    // Get the point margin at this specific time
                     const point_margin =
-                        game.score_stats_by_minute.point_margins[48 - start_time - 1];
+                        game.score_stats_by_minute.point_margins[index];
                     win_point_margin = sign * point_margin;
                     lose_point_margin = -1 * win_point_margin;
-                } else if (start_time !== null && stop_time !== null) {
-                    // Max points down during a time period
+                } else if (down_mode === "max") {
+                    // Max points down during a time period to the end of the game
                     win_point_margin = Infinity;
                     lose_point_margin = Infinity;
 
-                    for (let minute = start_time; minute > stop_time - 1; minute--) {
-                        const min_point_margin =
-                            game.score_stats_by_minute.min_point_margins[48 - minute];
-                        const max_point_margin =
-                            game.score_stats_by_minute.max_point_margins[48 - minute];
+                    // Get the start index for the time (works with both number and string formats)
+                    const startIndex =
+                        nbacc_calculator_season_game_loader.TIME_TO_INDEX_MAP[
+                            start_time
+                        ];
+                    // Define the end index (end of game is index of 0 minute)
+                    const stopIndex =
+                        nbacc_calculator_season_game_loader.TIME_TO_INDEX_MAP[0];
+
+                    // Loop through all time points from start_time to the end of the game
+                    // Using the Python's range(start_index, stop_index + 1) equivalent
+                    for (let i = startIndex; i <= stopIndex; i++) {
+                        const minute =
+                            nbacc_calculator_season_game_loader.GAME_MINUTES[i];
+
+                        let min_point_margin, max_point_margin;
+
+                        // For first time point, use the current margin
+                        if (i === startIndex) {
+                            min_point_margin =
+                                game.score_stats_by_minute.point_margins[i];
+                            max_point_margin =
+                                game.score_stats_by_minute.point_margins[i];
+                        } else {
+                            // For subsequent time points, use min/max values
+                            min_point_margin =
+                                game.score_stats_by_minute.min_point_margins[i];
+                            max_point_margin =
+                                game.score_stats_by_minute.max_point_margins[i];
+                        }
 
                         if (game.score_diff > 0) {
                             win_point_margin = Math.min(
@@ -305,7 +345,9 @@ const nbacc_calculator_plot_primitives = (() => {
                         }
                     }
                 } else {
-                    throw new Error("Invalid time parameters");
+                    throw new Error(
+                        `Invalid down_mode: ${down_mode}. Must be "at" or "max"`
+                    );
                 }
 
                 // Add game to win/loss maps based on filter
@@ -344,73 +386,76 @@ const nbacc_calculator_plot_primitives = (() => {
 
         clean_point_margin_map_end_points(point_margin_map) {
             // Find first minute with win percentage > 0
-            let first_minute = null;
+            let first_point_margin = null;
             const sortedEntries = Object.entries(point_margin_map)
                 .map(([key, value]) => [Number(key), value])
                 .sort((a, b) => a[0] - b[0]);
 
-            for (const [minute, data] of sortedEntries) {
+            for (const [point_margin, data] of sortedEntries) {
                 if (data.odds[0] > 0) {
-                    if (first_minute === null) {
-                        first_minute = minute;
+                    if (first_point_margin === null) {
+                        first_point_margin = point_margin;
                     }
                     break;
                 } else {
-                    first_minute = minute;
+                    first_point_margin = point_margin;
                 }
             }
 
             // Find last minute with win percentage < 1.0
-            let last_minute = null;
+            let last_point_margin = null;
             const sortedEntriesReverse = [...sortedEntries].sort((a, b) => b[0] - a[0]);
 
-            for (const [minute, data] of sortedEntriesReverse) {
+            for (const [point_margin, data] of sortedEntriesReverse) {
                 if (data.odds[0] < 1.0) {
-                    if (last_minute === null) {
-                        last_minute = minute;
+                    if (last_point_margin === null) {
+                        last_point_margin = point_margin;
                     }
                     break;
                 } else {
-                    last_minute = minute;
+                    last_point_margin = point_margin;
                 }
             }
 
-            // Move data from minutes below first_minute to first_minute
-            for (const [minute, data] of sortedEntries) {
-                if (minute < first_minute) {
+            // Move data from points below first_point_margin to first_point_margin
+            for (const [point_margin, data] of sortedEntries) {
+                if (point_margin < first_point_margin) {
                     // Should have no wins
                     if (data.wins.size > 0) {
                         throw new Error("Unexpected wins found in low point margin");
                     }
 
-                    // Move losses to first_minute
-                    if (!point_margin_map[first_minute]) {
-                        point_margin_map[first_minute] = new PointMarginPercent();
+                    // Move losses to first_point_margin
+                    if (!point_margin_map[first_point_margin]) {
+                        point_margin_map[first_point_margin] = new PointMarginPercent();
                     }
 
                     data.losses.forEach((id) =>
-                        point_margin_map[first_minute].losses.add(id)
+                        point_margin_map[first_point_margin].losses.add(id)
                     );
 
-                    delete point_margin_map[minute];
-                } else if (minute > last_minute) {
+                    delete point_margin_map[point_margin];
+                } else if (point_margin > last_point_margin) {
                     // Should have no losses
                     if (data.losses.size > 0) {
                         throw new Error("Unexpected losses found in high point margin");
                     }
 
-                    // Move wins to last_minute
-                    if (!point_margin_map[last_minute]) {
-                        point_margin_map[last_minute] = new PointMarginPercent();
+                    // Move wins to last_point_margin
+                    if (!point_margin_map[last_point_margin]) {
+                        point_margin_map[last_point_margin] = new PointMarginPercent();
                     }
 
                     data.wins.forEach((id) =>
-                        point_margin_map[last_minute].wins.add(id)
+                        point_margin_map[last_point_margin].wins.add(id)
                     );
 
-                    delete point_margin_map[minute];
+                    delete point_margin_map[point_margin];
                 }
             }
+
+            // Return the first and last point margins, just like the Python version
+            return [first_point_margin, last_point_margin];
         }
 
         fit_regression_lines(min_game_count, max_fit_point, calculate_occurrences) {
@@ -422,51 +467,80 @@ const nbacc_calculator_plot_primitives = (() => {
 
             // Handle percentage-based max fit point
             if (typeof max_fit_point === "string" && max_fit_point.endsWith("%")) {
-                const amount = parseFloat(max_fit_point) / 100.0;
+                const amount = parseFloat(max_fit_point.slice(0, -1)) / 100.0;
                 let max_fit_point_amount;
+                let foundMatch = false;
 
+                // Exact match to Python: Find first point where percent > amount
                 for (let index = 0; index < this.point_margins.length; index++) {
                     if (this.percents[index] > amount) {
                         max_fit_point_amount = this.point_margins[index];
+                        foundMatch = true;
                         break;
                     }
                 }
 
-                if (!max_fit_point_amount) {
-                    throw new Error(`Could not find point margin for ${max_fit_point}`);
+                // Python has an "else" clause on the for loop (for-else construct)
+                // that raises AssertionError if no match found
+                if (!foundMatch) {
+                    throw new Error(
+                        `AssertionError: No match found for percentage: ${max_fit_point}`
+                    );
                 }
 
                 max_fit_point = max_fit_point_amount;
+
+                // At least 10 points of fit data - exact Python match
+                let safe_fit_point;
+                // JavaScript returns undefined for out-of-bounds array access, not an exception like Python
+                if (this.point_margins.length > 10) {
+                    safe_fit_point = this.point_margins[10];
+                } else {
+                    // If fewer than 11 points, use the last one (matching Python's except IndexError logic)
+                    safe_fit_point = this.point_margins[this.point_margins.length - 1];
+                }
+
+                // Apply same safety thresholds as Python
+                if (safe_fit_point > -2) {
+                    safe_fit_point = -2;
+                }
+                max_fit_point = Math.max(max_fit_point, safe_fit_point);
+                max_fit_point = Math.max(max_fit_point, -18);
             }
 
-            // Ensure at least 10 points for fit
-            try {
-                max_fit_point = Math.max(max_fit_point, this.point_margins[10]);
-            } catch (error) {
-                max_fit_point = Math.max(
-                    max_fit_point,
-                    this.point_margins[this.point_margins.length - 1]
-                );
+            // Ensure index is at least 2 - exact Python match
+            if (this.point_margins.indexOf(max_fit_point) < 2) {
+                // Check if we have enough points (JavaScript behavior != Python)
+                if (this.point_margins.length > 2) {
+                    max_fit_point = this.point_margins[2];
+                } else if (this.point_margins.length > 0) {
+                    // Not enough points, use last available (matching Python's behavior)
+                    max_fit_point = this.point_margins[this.point_margins.length - 1];
+                }
             }
 
             min_game_count = min_game_count !== null ? min_game_count : 0;
             max_fit_point = max_fit_point !== null ? max_fit_point : Infinity;
 
-            // Gather points for fitting
+            // Gather points for fitting - exact match to Python
             const fit_xy = [];
-            for (let i = 0; i < this.point_margins.length; i++) {
-                const point_margin = this.point_margins[i];
+            for (let index = 0; index < this.point_margins.length; index++) {
+                const point_margin = this.point_margins[index];
                 if (
-                    PointsDownLine.min_percent < this.percents[i] &&
-                    this.percents[i] < PointsDownLine.max_percent &&
+                    PointsDownLine.min_percent <= this.percents[index] &&
+                    this.percents[index] <= PointsDownLine.max_percent &&
                     point_margin <= max_fit_point
                 ) {
-                    fit_xy.push([point_margin, this.sigmas[i]]);
+                    fit_xy.push([point_margin, this.sigmas[index]]);
                 }
             }
 
             const fit_x = fit_xy.map((p) => p[0]);
             const fit_y = fit_xy.map((p) => p[1]);
+
+            if (fit_x.length < 2) {
+                throw new Error("AssertionError: Not enough points for regression");
+            }
 
             try {
                 // First do simple linear regression
@@ -506,15 +580,26 @@ const nbacc_calculator_plot_primitives = (() => {
                     });
                 }
 
+                // Convert to Num.array to match Python behavior
+                const X_array = Num.array(X);
+                const Y_array = Num.array(Y);
+                const x_array = Num.array(x);
+                const y_array = Num.array(y);
+
                 // Do MLE probit regression
-                const model_probit = Num.fit_it_mle(X, Y, "probit", this.m, this.b);
+                const model_probit = Num.fit_it_mle(
+                    X_array,
+                    Y_array,
+                    "probit",
+                    this.m,
+                    this.b
+                );
 
                 this.m = model_probit.m;
                 this.b = model_probit.b;
 
                 return max_fit_point;
             } catch (error) {
-                console.error("Error fitting regression:", error);
                 this.m = null;
                 this.b = null;
                 return max_fit_point;
@@ -633,6 +718,8 @@ const nbacc_calculator_plot_primitives = (() => {
                 m: this.m,
                 b: this.b,
                 number_of_games: this.number_of_games,
+                or_less_point_margin: this.or_less_point_margin,
+                or_more_point_margin: this.or_more_point_margin,
             };
 
             json_data.x_values = this.point_margins;

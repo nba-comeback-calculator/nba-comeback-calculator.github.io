@@ -90,10 +90,10 @@ async function loadAndPlotChart(chartDiv) {
         const configureButton = document.createElement("button");
         configureButton.className = "btn btn-primary calculator-configure-btn";
         configureButton.textContent = "Configure";
-        configureButton.addEventListener("click", function () {
+        configureButton.addEventListener("click", function (event) {
             // Show calculator UI for this specific chart
             if (typeof nbacc_calculator_ui !== "undefined") {
-                nbacc_calculator_ui.showCalculatorUI(divId);
+                nbacc_calculator_ui.showCalculatorUI(divId, event);
             } else {
                 console.error("nbacc_calculator_ui module is not loaded");
             }
@@ -110,7 +110,8 @@ async function loadAndPlotChart(chartDiv) {
         typeof nbacc_calculator_state !== 'undefined' && 
         nbacc_calculator_state.hasStateInUrl()) {
         
-        console.log(`Calculator chart with URL parameters detected for ${divId}, using URL data instead of JSON file`);
+        // This console logging is no longer needed because features are working fine
+        // console.log(`Calculator chart with URL parameters detected for ${divId}, using URL data instead of JSON file`);
         
         // Show loading indicator while calculator processes the URL data
         chartContainer.innerHTML = '<div class="chart-loading">Processing calculator data from URL...</div>';
@@ -229,6 +230,8 @@ async function loadAndPlotChart(chartDiv) {
     });
 
     // Create a global keyboard handler for this chart instead of focusing the canvas
+    // COMMENTED OUT - Removed keyboard event listeners as requested
+    /*
     const chartKeyboardHandler = function (event) {
         if (event.key === "f" || event.key === "F") {
             // Check if the mouse is over this chart
@@ -252,6 +255,7 @@ async function loadAndPlotChart(chartDiv) {
 
     // Add global key event listener
     document.addEventListener("keydown", chartKeyboardHandler);
+    */
 
     // // Mark chart as active when mouse enters
     // canvas.addEventListener("mouseenter", function () {

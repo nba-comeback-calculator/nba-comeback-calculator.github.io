@@ -164,6 +164,13 @@ fullscreen = function(chart, fullScreenButton) {
         // Disable page scrolling
         document.body.style.overflow = "hidden";
         
+        // Get the latest chart instance in case it's been recreated
+        const chartId = chart.canvas.id;
+        if (chartId) {
+            const latestChart = Chart.getChart(chartId) || chart;
+            chart = latestChart;
+        }
+        
         // Store the current chart in our global variable for access by ESC key handler
         currentFullscreenChart = chart;
 
@@ -243,27 +250,45 @@ function removeMobileResetZoomButton(chart) {
  * @param {HTMLElement} fullScreenButton - The fullscreen toggle button
  */
 function restoreChartFromFullscreen(chart, fullScreenButton) {
-    // Update button appearance
-    fullScreenButton.innerHTML = '<i class="chart-icon full-screen-icon"></i>';
-    fullScreenButton.setAttribute("data-tooltip", "Full Screen");
-    fullScreenButton.setAttribute("data-fullscreen", "false");
-    fullScreenButton.onclick = fullscreen(chart, fullScreenButton);
-
-    // Close lightbox
-    lightboxInstance.close();
-
-    // Restore chart to original parent
-    chart.mainChartDiv.appendChild(chart.parentChartDiv);
-
-    // Restore original dimensions
-    const chartContainer = chart.canvas.parentElement;
-    chartContainer.style.width = chart.originalWidth || "";
-    chartContainer.style.height = chart.originalHeight || "";
-    chartContainer.style.maxWidth = chart.originalMaxWidth || "";
-    chartContainer.style.maxHeight = chart.originalMaxHeight || "";
-
-    // Resize chart to fit original container
-    chart.resize();
+    if (!chart || !fullScreenButton) {
+        console.error("Missing chart or fullScreenButton in restoreChartFromFullscreen");
+        return;
+    }
+    
+    try {
+        // Update button appearance
+        fullScreenButton.innerHTML = '<i class="chart-icon full-screen-icon"></i>';
+        fullScreenButton.setAttribute("data-tooltip", "Full Screen");
+        fullScreenButton.setAttribute("data-fullscreen", "false");
+        
+        // Set button click handler back to fullscreen mode
+        fullScreenButton.onclick = fullscreen(chart, fullScreenButton);
+        
+        // Close lightbox
+        lightboxInstance.close();
+        
+        // Ensure we have mainChartDiv before attempting to restore
+        if (chart.mainChartDiv && chart.parentChartDiv) {
+            // Restore chart to original parent
+            chart.mainChartDiv.appendChild(chart.parentChartDiv);
+        } else {
+            console.error("Missing parentChartDiv or mainChartDiv reference");
+        }
+        
+        // Restore original dimensions if they exist
+        const chartContainer = chart.canvas ? chart.canvas.parentElement : null;
+        if (chartContainer) {
+            chartContainer.style.width = chart.originalWidth || "";
+            chartContainer.style.height = chart.originalHeight || "";
+            chartContainer.style.maxWidth = chart.originalMaxWidth || "";
+            chartContainer.style.maxHeight = chart.originalMaxHeight || "";
+            
+            // Resize chart to fit original container
+            chart.resize();
+        }
+    } catch (error) {
+        console.error("Error in restoreChartFromFullscreen:", error);
+    }
 }
 
 /**
@@ -288,7 +313,9 @@ function repositionFullscreenButtons(chart) {
  * @param {Event} event - The triggering event
  */
 function exitFullScreen(event) {
-    nbacc_utils.chartJsToolTipClearer(event);
+    if (event) {
+        nbacc_utils.chartJsToolTipClearer(event);
+    }
 
     // Re-enable page scrolling
     document.body.style.overflow = "";
@@ -305,31 +332,69 @@ function exitFullScreen(event) {
     
     // Get a reference to the current chart
     const chartToRestore = currentFullscreenChart;
-
-    // Reset zoom and update chart
-    chartToRestore.resetZoom();
-
-    // Handle device-specific exit actions
-    if (nbacc_utils.isMobile()) {
-        exitMobileFullscreen(chartToRestore);
-    } else {
-        // For desktop, ensure the chart is updated after zoom reset
-        if (chartToRestore.options.plugins && chartToRestore.options.plugins.zoom) {
-            chartToRestore.update();
-        }
-    }
-
-    // Restore chart to original state
-    restoreChartFromFullscreen(chartToRestore, chartToRestore.fullScreenButton);
-
-    // Reposition buttons
-    repositionFullscreenButtons(chartToRestore);
     
-    // Clear the global tracking variable
-    currentFullscreenChart = null;
+    try {
+        // Reset zoom and update chart if chart still exists
+        if (chartToRestore.resetZoom && typeof chartToRestore.resetZoom === 'function') {
+            chartToRestore.resetZoom();
+        }
+
+        // Handle device-specific exit actions
+        if (nbacc_utils.isMobile()) {
+            exitMobileFullscreen(chartToRestore);
+        } else {
+            // For desktop, ensure the chart is updated after zoom reset
+            if (chartToRestore.options?.plugins?.zoom && chartToRestore.update) {
+                chartToRestore.update();
+            }
+        }
+
+        // Check for full screen button, especially for calculator charts
+        if (!chartToRestore.fullScreenButton) {
+            // Try to find the button directly from canvas
+            const buttonContainer = chartToRestore.canvas?.parentElement?.querySelector(".chart-buttons");
+            if (buttonContainer) {
+                chartToRestore.fullScreenButton = buttonContainer.querySelector(".full-screen-btn");
+            }
+        }
+
+        // Restore chart to original state
+        restoreChartFromFullscreen(chartToRestore, chartToRestore.fullScreenButton);
+
+        // Reposition buttons
+        repositionFullscreenButtons(chartToRestore);
+        
+        // For calculator charts, do extra validation of button state
+        if (chartToRestore.canvas?.id === "nbacc_calculator_chart" ||
+            chartToRestore.canvas?.id?.endsWith("-canvas")) {
+            // Find all full screen buttons for this chart and reset them
+            const canvas = chartToRestore.canvas;
+            const container = canvas?.parentElement;
+            if (container) {
+                const allButtons = container.querySelectorAll(".full-screen-btn");
+                allButtons.forEach(button => {
+                    button.innerHTML = '<i class="chart-icon full-screen-icon"></i>';
+                    button.setAttribute("data-tooltip", "Full Screen");
+                    button.setAttribute("data-fullscreen", "false");
+                    button.onclick = fullscreen(chartToRestore, button);
+                });
+            }
+        }
+    } catch (error) {
+        console.error("Error during exit fullscreen:", error);
+        // Try to clean up anyway
+        if (lightboxInstance && lightboxInstance.visible()) {
+            lightboxInstance.close();
+        }
+    } finally {
+        // Always clear the global tracking variable
+        currentFullscreenChart = null;
+    }
 }
 
 // Setup global ESC key handler that uses our global currentFullscreenChart variable
+// COMMENTED OUT - Removed keyboard event listeners as requested
+/*
 document.addEventListener("keydown", function(e) {
     if (e.key === "Escape" && lightboxInstance && lightboxInstance.visible()) {
         // Get the exitFullScreen function from the module scope
@@ -344,6 +409,7 @@ document.addEventListener("keydown", function(e) {
         }
     }
 });
+*/
 
 /**
  * Creates a button container for chart controls
@@ -366,6 +432,13 @@ function createChartButtonContainer() {
 
 // Function to create and add controls to the chart area
 function addControlsToChartArea(canvas, chart) {
+    // First check if canvas and chart exist
+    if (!canvas || !chart) {
+        // This console logging is no longer needed because features are working fine
+        // console.warn("Cannot add controls to chart area: canvas or chart is null");
+        return; // Exit early if required parameters are missing
+    }
+    
     // Create button container
     const buttonContainer = createChartButtonContainer();
 
@@ -428,7 +501,15 @@ function addControlsToChartArea(canvas, chart) {
     buttonContainer.appendChild(saveButton);
 
     // Add the button container to the chart container
-    const chartContainer = canvas.parentElement;
+    const chartContainer = canvas?.parentElement;
+    
+    // Check if chartContainer exists before appending
+    if (!chartContainer) {
+        // This console logging is no longer needed because features are working fine
+        // console.warn("Cannot add controls to chart area: chart container not found");
+        return; // Exit early if no container is found
+    }
+    
     chartContainer.appendChild(buttonContainer);
 
     // Set initial styles - positioning will be handled by updateButtonPositions
