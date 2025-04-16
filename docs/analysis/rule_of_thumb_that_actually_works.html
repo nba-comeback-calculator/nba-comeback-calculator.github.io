@@ -371,7 +371,7 @@
 <h1>A Rule Of Thumb That Actually Works If Your Thumb Is Good At Math<a class="headerlink" href="#a-rule-of-thumb-that-actually-works-if-your-thumb-is-good-at-math" title="Link to this heading">#</a></h1>
 <section id="a-rule-of-thumb">
 <span id="id1"></span><h2>A Rule Of Thumb<a class="headerlink" href="#a-rule-of-thumb" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="about.html"><span class="doc">What started all of this</span></a> is, I had this rule of thumb about
+<p><a class="reference internal" href="about.html"><span class="doc">What started all of this</span></a> was my rule of thumb about
 whether my team’s lead was “safe”:</p>
 <ul class="simple">
 <li><p>2 times the number of minutes remaining = pretty safe</p></li>
@@ -380,24 +380,24 @@ whether my team’s lead was “safe”:</p>
 <p>And I wanted to see how well it held up against real data. So now, after some effort,
 we can plot the <a class="reference internal" href="understanding_and_using_the_plots.html#percent-chance-of-winning-time-v-points-down"><span class="std std-ref">percent point plots</span></a> like this one:</p>
 <div id="thumb/nbacc_points_versus_time_all_eras" class="nbacc-chart"></div><p>And then we can plot those 2x and 3x guides on top of it and we get:</p>
-<div id="thumb/nbacc_points_versus_time_with_bad_guides_all_eras" class="nbacc-chart"></div><p>So, in short, a very bad rule of thumb.</p>
+<div id="thumb/nbacc_points_versus_time_with_bad_guides_all_eras" class="nbacc-chart"></div><p>So, in short, my rule of thumb was very poor.</p>
 <p>So – in googling about to see if someone had a better one – I was delighted <a class="reference external" href="https://messymatters.com/moneyball/">to have
 stumbled on this explanation</a>:</p>
 <blockquote class="pull-quote">
 <div><p>“An NBA team leading by twice the square root of minutes left in the game has an
 80% chance of winning.”</p>
 </div></blockquote>
-<p>This turns out to be very close, no matter which era you look at. In fact, leveraging
+<p>This turns out to be very accurate, regardless of which era you examine. In fact, leveraging
 the <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">observation that win probabilities versus point deficit are normally
-distributed</span></a>, we can actually come up with the
+distributed</span></a>, we can derive the
 multiplier for any given win probability:</p>
 <div class="math notranslate nohighlight">
 \[\text{Points Down} \approx 2.49 \cdot \Phi^{-1}(\text{% Win Chance}) \cdot \sqrt{\text{Minutes Remaining}}\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\Phi^{-1}\)</span> is the inverse of the standard normal cumulative distribution
-function and the <code class="docutils literal notranslate"><span class="pre">2.49</span></code> constant is when you look at all data from 1996 to now (if
+function and the <code class="docutils literal notranslate"><span class="pre">2.49</span></code> constant applies when looking at all data from 1996 to now (if
 you change the conditions, that number changes, usually slightly, <a class="reference internal" href="#best-fit-guides"><span class="std std-ref">as explained
 below</span></a>). This allows us to expand this rule for the (more
-interesting) 5% and close to snowball’s chance in hell of 1%:</p>
+interesting) 5% chance and the nearly impossible 1% chance:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Percent Chance</p></th>
@@ -421,7 +421,7 @@ interesting) 5% and close to snowball’s chance in hell of 1%:</p>
 <div id="thumb/nbacc_points_versus_time_with_guides_all_eras" class="nbacc-chart"></div><p>Which you can see holds up very nicely. (In fact, even later on, I stumbled upon
 <a class="reference external" href="https://www.slate.com/articles/sports/sports_nut/2015/06/golden_state_warriors_championship_a_new_formula_for_predicting_lead_changes.html">another example of the square root rule</a>
 but for the 90% probability case).</p>
-<p>For a lot of numbers, it’s hard to take the square root in your head, but for 16, 9, 4
+<p>For many numbers, it’s difficult to calculate square roots mentally, but for 16, 9, 4
 and 1 it’s easy:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>

@@ -371,22 +371,22 @@
 <h1>Forming the Plot Trend Lines<a class="headerlink" href="#forming-the-plot-trend-lines" title="Link to this heading">#</a></h1>
 <section id="trend-lines-help-reduce-statistical-noise">
 <span id="id1"></span><h2>Trend Lines Help Reduce Statistical Noise<a class="headerlink" href="#trend-lines-help-reduce-statistical-noise" title="Link to this heading">#</a></h2>
-<p>The purpose of the trend lines is to fit a statistically valid model to the data.  The
+<p>The purpose of the trend lines is to fit a statistically valid model to the data. The
 real data will have fluctuations, especially as you reduce the number of games in
-whatever set you are looking at.  For example, look at the points down at half chart
-for regular season and playoffs games for 2017-2024 (~10k games) versus just the
+whatever set you are looking at. For example, look at the points down at halftime chart
+for regular season and playoff games for 2017-2024 (~10k games) versus just the
 playoff games (~600 games).</p>
 <div id="trend/nbacc_at_24_compare_eras" class="nbacc-chart"></div><p>As you can see, the smaller data set is “noisier”, but the trend lines help cut through
 the noise so we can compare two datasets as best we can.</p>
 </section>
 <section id="how-to-form-the-trend-lines">
 <span id="id2"></span><h2>How To Form The Trend Lines<a class="headerlink" href="#how-to-form-the-trend-lines" title="Link to this heading">#</a></h2>
-<p>Usually, the best model is a line.  However, our data is not linear with respect to
-probability.  For example, look at the points down at the half when plotted on a linear
-y axis:</p>
-<div id="trend/nbacc_at_24_linear_axis" class="nbacc-chart"></div><p>As is, this is not very useful, as all the events we care about are smooshed down
+<p>Usually, the best model is a line. However, our data is not linear with respect to
+probability. For example, look at the points down at halftime when plotted on a linear
+y-axis:</p>
+<div id="trend/nbacc_at_24_linear_axis" class="nbacc-chart"></div><p>As is, this is not very useful, as all the events we care about are compressed down
 together at the bottom of the y-axis.</p>
-<p>What we can do, however, is find a function which will convert our non-linear data to a
+<p>What we can do, however, is find a function that will convert our non-linear data to a
 linear domain. For example, people often use the <span class="math notranslate nohighlight">\(ln\)</span> function <a class="reference external" href="https://leancrew.com/all-this/2020/03/exponential-growth-and-log-scales/">when
 dealing with exponential data</a>.</p>
 <p>With statistical data, the first go-to is the inverse of the unit normal (Gaussian)
@@ -398,34 +398,34 @@ sense of how normal your data is. This is what all of our ‘Max Points Down’ 
 Down at Time’ charts are: normal probability plots.</p>
 <p>Usually, these plots are shown with the y-axis in standard deviations from the mean (or
 sigmas). I’ve simply changed the y-axis labels to show the standard probabilities that
-we are used to talking about: for example, -1 sigma maps to about 15.8%, -2 to 2.2%,
+we’re used to discussing: for example, -1 sigma maps to about 15.8%, -2 to 2.2%,
 and -3 to 0.13%, etc.</p>
 </section>
 <section id="how-to-fit-the-line">
 <span id="id3"></span><h2>How to Fit The Line<a class="headerlink" href="#how-to-fit-the-line" title="Link to this heading">#</a></h2>
 <p>Now, the goal is simply to find the slope and y-intercept for our trend line in a way
-that is statistically valid. This is a <a class="reference external" href="https://en.wikipedia.org/wiki/Logistic_regression">standard logistic / probit regression problem</a>  where our descriptor variable
+that is statistically valid. This is a <a class="reference external" href="https://en.wikipedia.org/wiki/Logistic_regression">standard logistic/probit regression problem</a> where our descriptor variable
 (the point margin) determines the probability of an outcome (winning the game).</p>
 <p>For probit regression, this means:</p>
 <div class="math notranslate nohighlight">
 \[P(\text{win} \mid \text{point_margin}) = \Phi(\beta_0 + \beta_1 \times \text{point_margin})\]</div>
 <p>For probit, the link function <span class="math notranslate nohighlight">\(\Phi\)</span> is the normal cumulative distribution
-function. For logit regression, we would use the logit as the link function.  To find
+function. For logit regression, we would use the logit as the link function. To find
 the <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> we use standard maximum likelihood estimation
 (MLE), which gives us the most statistically sound way of finding our model (as opposed
-to, say, linear regression) .</p>
-<p>The major question is whether to use logit or probit.  And the answer is probit because
+to, say, linear regression).</p>
+<p>The major question is whether to use logit or probit. And the answer is probit because
 the inverse CDF function does a better job of linearizing our data, meaning it is more
-likely to be the correct underlying model.  Looking at the tail using the two methods
+likely to be the correct underlying model. Looking at the tail using the two methods
 we get:</p>
 <a class="reference internal image-reference" href="../_images/probit_v_logit.png"><img alt="../_images/probit_v_logit.png" class="align-center" src="../_images/probit_v_logit.png" style="width: 672.5400000000001px; height: 298.32px;" />
 </a>
 <p>As you can see, the inverse normal CDF does a better job at linearizing the data.</p>
-<p>This bears out when using the two methods and comparing returned p values and fit lines
-across various cases.  Using probit for our current set of conditions, we get:</p>
+<p>This bears out when using the two methods and comparing returned p-values and fit lines
+across various cases. Using probit for our current set of conditions, we get:</p>
 <div id="trend/nbacc_at_24_probit" class="nbacc-chart"></div><p>And using logit logistical regression we get:</p>
 <div id="trend/nbacc_at_24_logit" class="nbacc-chart"></div><p>This produces a poor fit in the tail region, which is especially problematic because
-the low probability events are the ones with which we are most concerned.</p>
+the low probability events are the ones we are most concerned with.</p>
 </section>
 </section>
 
