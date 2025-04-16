@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=5ae21e15" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=f9c3560e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=36c87a0d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=b0690993" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-calculator.css?v=1694221e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basicLightbox/5.0.0/basicLightbox.min.css" />
@@ -401,12 +401,14 @@ bucket.</p>
 <p><a class="reference internal" href="understanding_and_using_the_plots.html#max-points-down-or-more"><span class="std std-ref">A very common way of looking at comebacks</span></a> is
 calculating the % chance of coming back from down N points <em>or more</em> over an entire
 game:</p>
-<div id="plots/old_school_v_modern/max_down_or_more_48" class="nbacc-chart"></div><p>A major point is that the almost always the data is normal (Gaussian) so adding
-<a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">trend lines to the statistical data</span></a> and
-plotting it on a <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_probability_plot">normal probability plot</a>, we can see a fairly constant
-shift of about 2 points to the left for the modern era.</p>
-<p>You can <a class="reference internal" href="understanding_and_using_the_plots.html#using-the-plot-controls"><span class="std std-ref">interact with this chart</span></a> and hover over the
-raw data points to see which games compose a point (and compare it with a <a class="reference external" href="https://en.wikipedia.org/wiki/Comeback_(sports)#NBA">list of
+<div id="plots/old_school_v_modern/max_down_or_more_48" class="nbacc-chart"></div><p>And using a bit of stats which I’ll keep as brief as possible, since this data is
+normal (Gaussian) we can plot the data on a <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_probability_plot">normal probability plot</a> and <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">and fit trend lines
+to the statistical data</span></a>.  Once done, we can
+then more easily compare different eras or situations.  And when comparing the two
+eras, we can see a mostly stable and constant shift of about 2 points to the left for
+the modern era versus the past.</p>
+<p>You can <a class="reference internal" href="understanding_and_using_the_plots.html#using-the-plot-controls"><span class="std std-ref">interact with this chart</span></a> and hover over and
+click the points to see which games compose a point (and compare it with a <a class="reference external" href="https://en.wikipedia.org/wiki/Comeback_(sports)#NBA">list of
 biggest comebacks</a> if so
 inclined).  To focus on a few we get:</p>
 <div class="pst-scrollable-table-container"><table class="table" id="id6">
@@ -502,10 +504,10 @@ the past, a notable 1.59x increase (or about 59% more frequently).</p>
 <section id="what-would-be-dramatic">
 <span id="id5"></span><h2>What <em>Would</em> Be Dramatic<a class="headerlink" href="#what-would-be-dramatic" title="Link to this heading">#</a></h2>
 <p>Just to get a sense of what an 8 point shift looks like, if we look at top 10 teams
-(out of 30) vs. bottom 10 team we get:</p>
+(out of 30) vs. bottom 10 teams in the modern era we get:</p>
 <div id="20_18/dramatic" class="nbacc-chart"></div><p>Here, the chance of top ten team playing a bottom 10 team coming back from a
-20-points-or-more deficit (<code class="docutils literal notranslate"><span class="pre">~</span> <span class="pre">20%</span></code>) is about the same for any team coming back from
-12 or more down against any other team (basically, the average odds).</p>
+20-points-or-more deficit (<code class="docutils literal notranslate"><span class="pre">~20%</span></code>) is about the same for any team coming back from 12
+or more down against any other team.</p>
 </section>
 <section id="why-i-chose-my-years-breakdown">
 <span id="deciding-on-eras-breakdown"></span><h2>Why I Chose My Years Breakdown<a class="headerlink" href="#why-i-chose-my-years-breakdown" title="Link to this heading">#</a></h2>

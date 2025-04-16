@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/css/colored_boxes.css?v=5ae21e15" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=f9c3560e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/nbacc.css?v=36c87a0d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-media.css?v=b0690993" />
     <link rel="stylesheet" type="text/css" href="../_static/css/nbacc-calculator.css?v=1694221e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/basicLightbox/5.0.0/basicLightbox.min.css" />
@@ -370,9 +370,9 @@
   <section id="understanding-and-using-the-comeback-charts">
 <h1>Understanding and Using The Comeback Charts<a class="headerlink" href="#understanding-and-using-the-comeback-charts" title="Link to this heading">#</a></h1>
 <p>What do we mean by “comeback” and what’s the best way to view the “chances” of a
-comeback? It seems like a simple question, but there’s some nuance to it as there
-are slightly different ways of defining it. Let’s explore the four
-plot types used in this project:</p>
+comeback? It seems like a simple question, but there’s some nuance to it as there are
+slightly different ways of defining it. Let’s explore the four plot types used in this
+project:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#id1">Max Points Down Or More</a></p></li>
 <li><p><a class="reference internal" href="#id2">Max Points Down</a></p></li>
@@ -394,29 +394,39 @@ the-other-team-winning.</p>
 <div id="understand/nbacc_max_or_more_48_espn_0" class="nbacc-chart"></div><p>You can see the -10 point margin point lines up with these statistics exactly.</p>
 <p>It’s important to note here that every point contains all the wins and losses for the
 previous point margins. As we move from left to right, we are accumulating all the
-games. This means that a given point margin (say -10) is getting weighted down with
-all of the previous (and lower chance) probabilities, because the -10 point also
-includes the wins/losses from -11, -12, -13, …, -20, …, -30, and on and on.</p>
+games. This means that a given point margin (say -10) is getting weighted down with all
+of the previous (and lower chance) probabilities, because the -10 point also includes
+the wins/losses from -11, -12, -13, …, -20, …, -30, and on and on.</p>
 </section>
 <section id="max-points-down">
 <span id="id2"></span><h2>Max Points Down<a class="headerlink" href="#max-points-down" title="Link to this heading">#</a></h2>
 <p>Even though this is a common way of talking about comebacks, it’s a little unfair in a
-sense. For the -10 point, the odds of coming back are weighted down by all the other more
-unlikely comebacks.</p>
+sense. For the -10 point, the odds of coming back are weighted down by all the other
+more unlikely comebacks.</p>
 <p>A somewhat more fair way to look at it is: the max point you are down <em>at most</em> – that
 leads to these types of plots:</p>
 <div id="understand/nbacc_max_48_eras_1" class="nbacc-chart"></div><p>So here we see the raw data for the -10 points down is 53% for the modern era and 48%
 for the old school era. What this is saying is that, on average, the winning team goes
 down at most 10 points at some point in the game – and comes back! So if your team is
 down 10 points, don’t sweat it too hard, it’s totally average.</p>
+<div class="box-container green-box docutils container">
+<p>Overall, I usually feel this is the fairest way to examine comeback data. Unlike
+max or more, as you move from left to right the stats aren’t weighed down by the
+larger point margin cases.</p>
+<p>And unlike <a class="reference internal" href="#points-down-at-time"><span class="std std-ref">points down at time plots</span></a>, it accounts for
+the fact that a team might not be down at that time, but they may fall down later
+in the game a still comeback.  For example, if a team is down -24 starting the 10th
+minute and stages a comeback (like the <a class="reference internal" href="do_the_twolves_give_up_big_leads.html#twolves-tie-a-dubious-nba-record"><span class="std std-ref">Bucks did to our Twolves on 04/09/2025</span></a>) you want to compare against other teams that
+fell down 24 at an even later time and still cameback.</p>
+</div>
 </section>
 <section id="points-down-at-time">
 <span id="id3"></span><h2>Points Down At Time<a class="headerlink" href="#points-down-at-time" title="Link to this heading">#</a></h2>
 <p>But what about when you’re watching a game and don’t have the benefit of hindsight to
 know what your max point deficit is going to be? As a fan, the most natural way to
-think of it is – I am down this many points right now, what are the odds? In this case,
-you pick a certain point in time and collect all the point margins at that time and
-determine the chance of winning, leading to plots like this:</p>
+think of it is – I am down this many points right now, what are the odds? In this
+case, you pick a certain point in time and collect all the point margins at that time
+and determine the chance of winning, leading to plots like this:</p>
 <div id="understand/nbacc_down_at_24_eras_1" class="nbacc-chart"></div><p>So that chart says things like: if your team is down 20 points at the half, they have a
 5% chance of winning on average. You can use the <a class="reference internal" href="../calculator/index.html"><span class="doc">calculator</span></a> to try as many different times as you want.</p>
 </section>
@@ -441,8 +451,8 @@ deficit at that time and provide that point with game data.</p>
 <li><p>Actual data taken from NBA games. This comes up when you click on the scatter plot
 points. Here you can look at the # Wins / # Games, the calculated Win %, how often
 this point deficit occurs (win or lose), and a few of the games that make up this
-point. The reported games are also hyperlinks, so you can go to NBA.com and
-view the play-by-play report and media coverage if available.</p></li>
+point. The reported games are also hyperlinks, so you can go to NBA.com and view the
+play-by-play report and media coverage if available.</p></li>
 <li><p>The trend line data points – this shows you the “best” Win % chance for this
 point deficit <a class="reference internal" href="forming_the_plot_trend_lines.html"><span class="doc">since the trend line filters out much of the statistical noise</span></a>.</p></li>
 </ol>
@@ -464,9 +474,9 @@ can copy and paste and share it how you see fit.</p>
 the score is tied at halftime. Let’s say there are 1,000 such games in your set. Well,
 there are 1,000 wins and 1,000 losses in these cases, so if you used the second formula
 you would get a Win % = 100%, which is incorrect.</p>
-<p>The same thing happens with the Max Down Or More plots. Some of the same games are
-both wins and losses, so we use the first formula which matches with how the statistic
-is generally reported.</p>
+<p>The same thing happens with the Max Down Or More plots. Some of the same games are both
+wins and losses, so we use the first formula which matches with how the statistic is
+generally reported.</p>
 <p>Just note that in the hover boxes, the “Wins X out of Y Games” is using the total
 number of games for the Y. So if you divide X/Y you might get a different number than
 the Win %. Normally, the numbers are almost the same.</p>
