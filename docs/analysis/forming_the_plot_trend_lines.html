@@ -416,12 +416,11 @@ the <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span clas
 to, say, linear regression).</p>
 <p>The major question is whether to use logit or probit. And the answer is probit because
 the inverse CDF function does a better job of linearizing our data, meaning it is more
-likely to be the correct underlying model. Looking at the tail using the two methods
-we get:</p>
+likely to be the correct underlying model. Looking at the tail using the two methods, we get:</p>
 <a class="reference internal image-reference" href="../_images/probit_v_logit.png"><img alt="../_images/probit_v_logit.png" class="align-center" src="../_images/probit_v_logit.png" style="width: 672.5400000000001px; height: 298.32px;" />
 </a>
 <p>As you can see, the inverse normal CDF does a better job at linearizing the data.</p>
-<p>This bears out when using the two methods and comparing returned p-values and fit lines
+<p>This is confirmed when using the two methods and comparing returned p-values and fit lines
 across various cases. Using probit for our current set of conditions, we get:</p>
 <div id="trend/nbacc_at_24_probit" class="nbacc-chart"></div><p>And using logit logistical regression we get:</p>
 <div id="trend/nbacc_at_24_logit" class="nbacc-chart"></div><p>This produces a poor fit in the tail region, which is especially problematic because
