@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Comeback Calculator - Redirecting</title>
+    <script>
+        var newUrl = "https://nba-comeback-dashboard.github.io" + window.location.pathname + window.location.search;
+        document.write('<meta http-equiv="refresh" content="0; url=' + newUrl + '">');
+        window.location.href = newUrl;
+    </script>
+</head>
+<body>
+    <p>This site has moved to <a id="redirect-link" href="https://nba-comeback-dashboard.github.io">nba-comeback-dashboard.github.io</a>. Redirecting you now...</p>
+    <script>
+        document.getElementById("redirect-link").href = "https://nba-comeback-dashboard.github.io" + window.location.pathname + window.location.search;
+    </script>
+</body>
+</html>
